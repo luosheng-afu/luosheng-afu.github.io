@@ -988,7 +988,7 @@ samp {
 }
 .navbar-custom .navbar-brand {
   font-weight: 800;
-  color: #25D1FC;
+  color: rgba(37, 209, 252);
   height: 56px;
   line-height: 25px;
 }
