@@ -1,7 +1,7 @@
 ---
 title: 调查问卷
 layout: default
-description: "「让我抽查抽查！」"
+description: "「让我调查！」"
 ---
 
 <!--
@@ -17,7 +17,7 @@ https://github.com/kitian616/jekyll-TeXt-theme
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>摆场-玖幺技术兴趣与城市交流调查</title>
+    <title>摆场-技术兴趣与城市交流调查</title>
     <style>
         * {
             box-sizing: border-box;
@@ -270,8 +270,8 @@ https://github.com/kitian616/jekyll-TeXt-theme
 </head>
 <body>
     <div class="container">
-        <h1>摆场-玖幺技术兴趣与城市交流调查</h1>
-        <p class="description">请填写以下信息，帮助我们了解您的技术兴趣和交♂流意向</p>
+        <h1>摆场-技术兴趣与城市交流调查</h1>
+        <p class="description">请填写以下信息，帮助我们了解您的技术兴趣和交流意向</p>
         
         <form id="surveyForm">
             <!-- 探索方向（单选） -->
@@ -286,47 +286,35 @@ https://github.com/kitian616/jekyll-TeXt-theme
                         <input type="radio" id="back" name="direction" value="后端">
                         <label for="back">后端</label>
                     </div>
-                    <div class="radio-item">
-                        <input type="radio" id="ai" name="direction" value="内部">
-                        <label for="ai">内部</label>
-                    </div>
                 </div>
             </div>
             
             <!-- 熟悉技术（多选） -->
             <div class="form-group">
-                <div class="form-title">你熟悉的 技术/体位 有哪些？</div>
+                <div class="form-title">你熟悉的技术有哪些？</div>
                 <div class="checkbox-group">
                     <div class="checkbox-item">
-                        <input type="checkbox" id="html" name="tech" value="扣">
-                        <label for="html">扣</label>
+                        <input type="checkbox" id="html" name="tech" value="HTML">
+                        <label for="html">HTML</label>
                     </div>
                     <div class="checkbox-item">
-                        <input type="checkbox" id="jql" name="tech" value="口" checked>
-                        <label for="jql">口</label>
+                        <input type="checkbox" id="jql" name="tech" value="JQL" checked>
+                        <label for="jql">JQL</label>
                     </div>
                     <div class="checkbox-item">
-                        <input type="checkbox" id="mysql" name="tech" value="双指">
-                        <label for="mysql">双指</label>
+                        <input type="checkbox" id="mysql" name="tech" value="MYSQL">
+                        <label for="mysql">MYSQL</label>
                     </div>
                     <div class="checkbox-item">
-                        <input type="checkbox" id="asp" name="tech" value="女上位(骑乘)">
-                        <label for="asp">女上位（骑乘）</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="ass" name="tech" value="站立抱姿">
-                        <label for="ass">站立抱姿</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input type="checkbox" id="asss" name="tech" value="后入式">
-                        <label for="asss">后入式</label>
+                        <input type="checkbox" id="asp" name="tech" value="ASP">
+                        <label for="asp">ASP</label>
                     </div>
                 </div>
             </div>
             
             <!-- 城市交流（多选） -->
             <div class="form-group">
-                <div class="form-title">你希望到哪个城市进行交流？</div>
+                <div class="form-title">你希望到哪个城市？</div>
                 
                 <div class="region-group">
                     <div class="region-header">
@@ -335,8 +323,8 @@ https://github.com/kitian616/jekyll-TeXt-theme
                     </div>
                     <div class="region-content">
                         <div class="checkbox-item">
-                            <input type="checkbox" id="chengdu" name="city" value="成都">
-                            <label for="chengdu">成都</label>
+                            <input type="checkbox" id="chengdu" name="city" value="贵州">
+                            <label for="chengdu">贵州</label>
                         </div>
                         <div class="checkbox-item">
                             <input type="checkbox" id="chongqing" name="city" value="重庆">
@@ -382,7 +370,7 @@ https://github.com/kitian616/jekyll-TeXt-theme
             
             <!-- 新增姓名填写部分 -->
             <div class="form-group">
-                <div class="form-title">你渴望交流的对象</div>
+                <div class="form-title">你希望被分配的职位</div>
                 <input type="text" class="name-input" id="userName" name="userName" placeholder="请输入TA的名字" required>
             </div>
             
@@ -436,9 +424,9 @@ https://github.com/kitian616/jekyll-TeXt-theme
             const cityValue = cityValues.length > 0 ? cityValues.join('、') : '未选择';
             
             // 显示结果
-            document.getElementById('nameResult').textContent = `姓名：${nameValue}`;
-            document.getElementById('directionResult').textContent = `探索方向：${directionValue}`;
-            document.getElementById('techResult').textContent = `熟悉技术/体位：${techValue}`;
+            document.getElementById('nameResult').textContent = `职位：${nameValue}`;
+            document.getElementById('directionResult').textContent = `方向：${directionValue}`;
+            document.getElementById('techResult').textContent = `熟悉技术：${techValue}`;
             document.getElementById('cityResult').textContent = `交流城市：${cityValue}`;
             
             // 显示结果区域
