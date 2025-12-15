@@ -12,3 +12,1456 @@ https://github.com/kitian616/jekyll-TeXt-theme
 {% include intro-header.html type='page' short=true %}
 
 <!-- Main Content -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语音处理动画教学 - 零基础入门</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4361ee;
+            --secondary-color: #3a0ca3;
+            --accent-color: #4cc9f0;
+            --success-color: #4caf50;
+            --warning-color: #ff9800;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --light-text: #6c757d;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+            color: var(--dark-text);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            top: -150px;
+            right: -100px;
+        }
+        
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .learning-path {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .path-step {
+            padding: 15px 25px;
+            background-color: white;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border: 2px solid transparent;
+        }
+        
+        .path-step.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .path-step.completed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .step-number {
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .active .step-number {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .content-area {
+            background-color: white;
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            min-height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .content-section {
+            display: none;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .section-title {
+            font-size: 2.2rem;
+            color: var(--secondary-color);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--accent-color);
+        }
+        
+        .section-subtitle {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin: 30px 0 15px;
+        }
+        
+        /* 动画演示容器 */
+        .animation-container {
+            background: linear-gradient(135deg, #f0f4f8, #e1e8f0);
+            border-radius: 15px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .animation-title {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        /* 语音波形动画 */
+        .voice-wave-demo {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .voice-wave {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 90%;
+            height: 150px;
+        }
+        
+        .wave-bar {
+            width: 12px;
+            height: 30px;
+            background-color: var(--primary-color);
+            margin: 0 4px;
+            border-radius: 6px;
+            animation: voiceWave 1.5s ease-in-out infinite;
+            opacity: 0.8;
+        }
+        
+        @keyframes voiceWave {
+            0%, 100% { height: 30px; }
+            25% { height: 100px; }
+            50% { height: 60px; }
+            75% { height: 120px; }
+        }
+        
+        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
+        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
+        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
+        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
+        .wave-bar:nth-child(6) { animation-delay: 0.5s; }
+        .wave-bar:nth-child(7) { animation-delay: 0.6s; }
+        .wave-bar:nth-child(8) { animation-delay: 0.7s; }
+        .wave-bar:nth-child(9) { animation-delay: 0.8s; }
+        
+        /* 语音识别流程动画 */
+        .recognition-process {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 30px;
+            position: relative;
+        }
+        
+        .process-step {
+            width: 150px;
+            height: 150px;
+            background-color: white;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+        
+        .process-step:hover {
+            transform: translateY(-10px);
+        }
+        
+        .process-step-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .process-step-title {
+            font-weight: 600;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+        
+        .process-connector {
+            height: 4px;
+            background-color: var(--accent-color);
+            flex-grow: 1;
+            margin: 0 10px;
+            position: relative;
+        }
+        
+        .process-connector::after {
+            content: "→";
+            position: absolute;
+            right: -10px;
+            top: -12px;
+            color: var(--accent-color);
+            font-size: 1.5rem;
+        }
+        
+        /* 声纹识别动画 */
+        .voiceprint-demo {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 30px;
+        }
+        
+        .voiceprint {
+            width: 200px;
+            height: 150px;
+            background-color: #2c3e50;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .voiceprint-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background-color: var(--accent-color);
+            bottom: 30%;
+            left: 0;
+            transform-origin: left;
+        }
+        
+        .voiceprint-line::before {
+            content: "";
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: var(--accent-color);
+            border-radius: 50%;
+            top: -4px;
+            left: 0;
+            animation: voiceprintMove 3s linear infinite;
+        }
+        
+        @keyframes voiceprintMove {
+            0% { left: 0; }
+            100% { left: 100%; }
+        }
+        
+        .voiceprint-label {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        /* 语音应用场景演示 */
+        .scenarios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .scenario-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .scenario-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+            border-color: var(--accent-color);
+        }
+        
+        .scenario-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        .scenario-title {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .scenario-desc {
+            color: var(--light-text);
+            text-align: center;
+        }
+        
+        /* 交互式演示区域 */
+        .interactive-demo {
+            background-color: #f0f7ff;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 40px;
+            border: 2px dashed var(--accent-color);
+        }
+        
+        .demo-title {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .demo-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .demo-btn {
+            padding: 12px 25px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+        }
+        
+        .demo-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .demo-btn i {
+            margin-right: 8px;
+        }
+        
+        .demo-output {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            min-height: 100px;
+            border: 1px solid #e0e0e0;
+            font-size: 1.1rem;
+        }
+        
+        /* 学习导航 */
+        .learning-nav {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+        }
+        
+        .nav-btn {
+            padding: 15px 30px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        
+        .nav-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+        }
+        
+        .nav-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .nav-btn i {
+            margin: 0 10px;
+        }
+        
+        /* 进度指示器 */
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 5px;
+            width: 16.6%; /* 初始进度，6个步骤中的第1个 */
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            color: var(--light-text);
+            margin-bottom: 10px;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .recognition-process {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .process-step {
+                margin-bottom: 30px;
+                width: 200px;
+            }
+            
+            .process-connector {
+                width: 4px;
+                height: 30px;
+                margin: 10px 0;
+            }
+            
+            .process-connector::after {
+                content: "↓";
+                right: -8px;
+                top: 25px;
+            }
+            
+            .voiceprint-demo {
+                flex-direction: column;
+                align-items: center;
+                gap: 40px;
+            }
+            
+            header h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .content-area {
+                padding: 25px;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .learning-path {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .path-step {
+                width: 90%;
+                justify-content: center;
+            }
+        }
+        
+        .highlight {
+            background-color: #fff9c4;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
+        
+        .explanation {
+            background-color: #e8f4fd;
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .explanation-title {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        
+        .fun-fact {
+            background-color: #f0f7ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 25px 0;
+            border-left: 5px solid var(--accent-color);
+        }
+        
+        .fact-icon {
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+        
+        .key-point {
+            background-color: #f9f5ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border: 1px solid #e0d6ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>语音处理动画教学</h1>
+            <p>通过交互式动画演示，零基础学习语音处理技术原理与应用场景</p>
+        </header>
+        
+        <div class="learning-path">
+            <div class="path-step active" data-step="1">
+                <div class="step-number">1</div>
+                <span>语音处理概述</span>
+            </div>
+            <div class="path-step" data-step="2">
+                <div class="step-number">2</div>
+                <span>语音输入原理</span>
+            </div>
+            <div class="path-step" data-step="3">
+                <div class="step-number">3</div>
+                <span>语音识别流程</span>
+            </div>
+            <div class="path-step" data-step="4">
+                <div class="step-number">4</div>
+                <span>声纹识别技术</span>
+            </div>
+            <div class="path-step" data-step="5">
+                <div class="step-number">5</div>
+                <span>应用场景演示</span>
+            </div>
+            <div class="path-step" data-step="6">
+                <div class="step-number">6</div>
+                <span>语音识别模拟器</span>
+            </div>
+        </div>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">学习进度: 1/6 (语音处理概述)</div>
+        
+        <div class="content-area">
+            <!-- 步骤1: 语音处理概述 -->
+            <section id="step1" class="content-section active">
+                <h2 class="section-title">语音处理概述</h2>
+                
+                <div class="explanation">
+                    <h3 class="explanation-title">什么是语音处理？</h3>
+                    <p>语音处理技术使计算机能够识别、理解和合成人类语音，架起了人与物联网、互联网服务之间的桥梁。</p>
+                    <p>我们正在步入万物互联、万物智能的时代，语音交互让我们能够在<strong>任何时间、任何地方、任何设备</strong>上进行自然交流。</p>
+                </div>
+                
+                <div class="animation-container">
+                    <h3 class="animation-title">语音交互系统架构演示</h3>
+                    <div class="recognition-process">
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="process-step-title">用户语音</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                            <div class="process-step-title">语音采集</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <div class="process-step-title">语音处理</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="process-step-title">智能响应</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="fun-fact">
+                    <p><i class="fas fa-lightbulb fact-icon"></i> <strong>你知道吗？</strong> 普通人打字速度是每分钟60字左右，而讲话每分钟一般是150字左右。语音输入法可以将语音转换为文字，大大提高输入效率。</p>
+                </div>
+            </section>
+            
+            <!-- 步骤2: 语音输入原理 -->
+            <section id="step2" class="content-section">
+                <h2 class="section-title">语音输入原理</h2>
+                
+                <div class="explanation">
+                    <h3 class="explanation-title">语音如何变成文字？</h3>
+                    <p>语音输入法通过语音识别技术将人的语音转换为文字。这个过程包括声音的采集、数字化、特征提取和文本转换。</p>
+                </div>
+                
+                <div class="animation-container">
+                    <h3 class="animation-title">语音信号数字化过程</h3>
+                    <div class="recognition-process">
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-wave-square"></i>
+                            </div>
+                            <div class="process-step-title">声波</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-microphone-alt"></i>
+                            </div>
+                            <div class="process-step-title">采集</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-filter"></i>
+                            </div>
+                            <div class="process-step-title">滤波</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-digital-tachograph"></i>
+                            </div>
+                            <div class="process-step-title">数字化</div>
+                        </div>
+                    </div>
+                    
+                    <div class="voice-wave-demo">
+                        <div class="voice-wave">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="key-point">
+                    <p><strong>关键技术：</strong> 科大讯飞的语音输入，最高速度能够达到1分钟400字，不仅支持中文录入、中文转英文等功能，还支持<strong>粤语、四川话、东北话、上海话、闽南语</strong>等多种方言输入。</p>
+                </div>
+            </section>
+            
+            <!-- 步骤3: 语音识别流程 -->
+            <section id="step3" class="content-section">
+                <h2 class="section-title">语音识别流程</h2>
+                
+                <div class="explanation">
+                    <h3 class="explanation-title">自动语音识别 (ASR)</h3>
+                    <p>自动语音识别就是让机器通过识别和理解把语音信号转变为相应的文本或命令的技术。</p>
+                </div>
+                
+                <div class="animation-container">
+                    <h3 class="animation-title">语音识别四步流程</h3>
+                    <div class="recognition-process">
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-file-audio"></i>
+                            </div>
+                            <div class="process-step-title">音频数字化</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="process-step-title">特征提取</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="process-step-title">模型训练</div>
+                        </div>
+                        
+                        <div class="process-connector"></div>
+                        
+                        <div class="process-step">
+                            <div class="process-step-icon">
+                                <i class="fas fa-code"></i>
+                            </div>
+                            <div class="process-step-title">解码器</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="key-point">
+                    <p><strong>特征提取：</strong> 常用的语音特征提取技术是<strong>梅尔倒谱系数(MFCC)</strong>，它能提取语音中的关键特征，忽略无关信息。</p>
+                </div>
+                
+                <div class="explanation">
+                    <h3 class="explanation-title">为什么语音识别不能100%准确？</h3>
+                    <p>语音识别准确率受到多种因素影响：</p>
+                    <ul>
+                        <li><strong>环境影响：</strong> 噪音、场地、麦克风、信道</li>
+                        <li><strong>说话人影响：</strong> 口音、方言、音量</li>
+                        <li><strong>说话内容影响：</strong> 中英混读、专业术语</li>
+                    </ul>
+                </div>
+            </section>
+            
+            <!-- 步骤4: 声纹识别技术 -->
+            <section id="step4" class="content-section">
+                <h2 class="section-title">声纹识别技术</h2>
+                
+                <div class="explanation">
+                    <h3 class="explanation-title">什么是声纹识别？</h3>
+                    <p>声纹识别技术能够提取每个人独一无二的语音特征，实现<strong>"听音辨人"</strong>，在涉及说话人身份识别的场景中具有重要应用价值。</p>
+                </div>
+                
+                <div class="animation-container">
+                    <h3 class="animation-title">不同人的声纹特征对比</h3>
+                    <div class="voiceprint-demo">
+                        <div class="voiceprint-item">
+                            <div class="voiceprint" id="voiceprint1">
+                                <div class="voiceprint-line" style="animation-delay: 0s;"></div>
+                            </div>
+                            <div class="voiceprint-label">用户A声纹</div>
+                        </div>
+                        
+                        <div class="voiceprint-item">
+                            <div class="voiceprint" id="voiceprint2">
+                                <div class="voiceprint-line" style="animation-delay: 0.5s; height: 4px;"></div>
+                            </div>
+                            <div class="voiceprint-label">用户B声纹</div>
+                        </div>
+                        
+                        <div class="voiceprint-item">
+                            <div class="voiceprint" id="voiceprint3">
+                                <div class="voiceprint-line" style="animation-delay: 1s; height: 2px;"></div>
+                            </div>
+                            <div class="voiceprint-label">用户C声纹</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="key-point">
+                    <p><strong>应用场景：</strong> 声纹识别在公安司法、门禁考勤、金融安全和刑侦领域都有重要应用，可以用于处理电话骚扰、绑架、诈骗等案件中的声音信息。</p>
+                </div>
+                
+                <div class="interactive-demo">
+                    <h3 class="demo-title">声纹识别模拟</h3>
+                    <p>点击下方按钮，模拟不同用户的声纹识别过程：</p>
+                    
+                    <div class="demo-controls">
+                        <button class="demo-btn" id="recognizeUserA">
+                            <i class="fas fa-user"></i> 识别用户A
+                        </button>
+                        <button class="demo-btn" id="recognizeUserB">
+                            <i class="fas fa-user"></i> 识别用户B
+                        </button>
+                        <button class="demo-btn" id="recognizeUserC">
+                            <i class="fas fa-user"></i> 识别用户C
+                        </button>
+                    </div>
+                    
+                    <div class="demo-output" id="voiceprintOutput">
+                        点击上方按钮开始声纹识别模拟
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 步骤5: 应用场景演示 -->
+            <section id="step5" class="content-section">
+                <h2 class="section-title">语音处理应用场景</h2>
+                
+                <div class="explanation">
+                    <h3 class="explanation-title">语音技术的广泛应用</h3>
+                    <p>语音处理技术已经深入到我们生活的方方面面，从智能家居到车载系统，从客服中心到个人助手。</p>
+                </div>
+                
+                <div class="scenarios-grid">
+                    <div class="scenario-card" data-scenario="input">
+                        <div class="scenario-icon">
+                            <i class="fas fa-keyboard"></i>
+                        </div>
+                        <h3 class="scenario-title">语音输入法</h3>
+                        <p class="scenario-desc">将语音实时转换为文字，支持多种方言，输入效率提升数倍</p>
+                    </div>
+                    
+                    <div class="scenario-card" data-scenario="home">
+                        <div class="scenario-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <h3 class="scenario-title">智能家居</h3>
+                        <p class="scenario-desc">语音控制灯光、温度、家电等，实现智能生活</p>
+                    </div>
+                    
+                    <div class="scenario-card" data-scenario="car">
+                        <div class="scenario-icon">
+                            <i class="fas fa-car"></i>
+                        </div>
+                        <h3 class="scenario-title">车载语音助手</h3>
+                        <p class="scenario-desc">控制车辆功能、导航、娱乐，提升驾驶安全</p>
+                    </div>
+                    
+                    <div class="scenario-card" data-scenario="service">
+                        <div class="scenario-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h3 class="scenario-title">智能客服</h3>
+                        <p class="scenario-desc">7×24小时自动应答，提升服务效率</p>
+                    </div>
+                    
+                    <div class="scenario-card" data-scenario="education">
+                        <div class="scenario-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3 class="scenario-title">智慧教育</h3>
+                        <p class="scenario-desc">语音评测、口语练习、智能辅导</p>
+                    </div>
+                    
+                    <div class="scenario-card" data-scenario="robot">
+                        <div class="scenario-icon">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <h3 class="scenario-title">服务机器人</h3>
+                        <p class="scenario-desc">商场导览、餐厅服务、医院导诊</p>
+                    </div>
+                </div>
+                
+                <div class="interactive-demo">
+                    <h3 class="demo-title">车载语音助手功能演示</h3>
+                    <p>点击下方按钮，体验车载语音助手的不同功能：</p>
+                    
+                    <div class="demo-controls">
+                        <button class="demo-btn" id="carControl">
+                            <i class="fas fa-temperature-low"></i> 车辆控制
+                        </button>
+                        <button class="demo-btn" id="carMonitor">
+                            <i class="fas fa-exclamation-triangle"></i> 驾驶监控
+                        </button>
+                        <button class="demo-btn" id="carEntertainment">
+                            <i class="fas fa-music"></i> 娱乐系统
+                        </button>
+                        <button class="demo-btn" id="carNavigation">
+                            <i class="fas fa-map-marked-alt"></i> 智能导航
+                        </button>
+                    </div>
+                    
+                    <div class="demo-output" id="carOutput">
+                        点击上方按钮体验车载语音助手功能
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 步骤6: 语音识别模拟器 -->
+            <section id="step6" class="content-section">
+                <h2 class="section-title">语音识别模拟器</h2>
+                
+                <div class="explanation">
+                    <h3 class="explanation-title">体验完整的语音识别过程</h3>
+                    <p>这个模拟器将演示从语音输入到文本输出的完整流程，包含语音采集、特征提取、模型匹配和文本输出四个步骤。</p>
+                </div>
+                
+                <div class="animation-container">
+                    <h3 class="animation-title">语音识别流程模拟</h3>
+                    
+                    <div class="recognition-process">
+                        <div class="process-step" id="stepMic">
+                            <div class="process-step-icon">
+                                <i class="fas fa-microphone"></i>
+                            </div>
+                            <div class="process-step-title">语音输入</div>
+                        </div>
+                        
+                        <div class="process-connector" id="connector1"></div>
+                        
+                        <div class="process-step" id="stepFeature">
+                            <div class="process-step-icon">
+                                <i class="fas fa-search"></i>
+                            </div>
+                            <div class="process-step-title">特征提取</div>
+                        </div>
+                        
+                        <div class="process-connector" id="connector2"></div>
+                        
+                        <div class="process-step" id="stepModel">
+                            <div class="process-step-icon">
+                                <i class="fas fa-cogs"></i>
+                            </div>
+                            <div class="process-step-title">模型匹配</div>
+                        </div>
+                        
+                        <div class="process-connector" id="connector3"></div>
+                        
+                        <div class="process-step" id="stepOutput">
+                            <div class="process-step-icon">
+                                <i class="fas fa-file-alt"></i>
+                            </div>
+                            <div class="process-step-title">文本输出</div>
+                        </div>
+                    </div>
+                    
+                    <div class="voice-wave-demo">
+                        <div class="voice-wave" id="simulationWave">
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                            <div class="wave-bar"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="interactive-demo">
+                    <h3 class="demo-title">语音识别模拟器</h3>
+                    <p>选择一句语音，然后点击"开始识别"按钮，观察语音识别的完整过程：</p>
+                    
+                    <div class="demo-controls">
+                        <select id="speechSelect" style="padding: 12px; border-radius: 8px; border: 2px solid var(--primary-color); font-size: 1rem;">
+                            <option value="今天天气怎么样？">今天天气怎么样？</option>
+                            <option value="打开客厅的灯">打开客厅的灯</option>
+                            <option value="导航到最近的加油站">导航到最近的加油站</option>
+                            <option value="播放周杰伦的歌曲">播放周杰伦的歌曲</option>
+                            <option value="明天早上七点叫我起床">明天早上七点叫我起床</option>
+                        </select>
+                        
+                        <button class="demo-btn" id="startRecognition">
+                            <i class="fas fa-play"></i> 开始识别
+                        </button>
+                        
+                        <button class="demo-btn" id="resetRecognition">
+                            <i class="fas fa-redo"></i> 重置
+                        </button>
+                    </div>
+                    
+                    <div class="demo-output" id="recognitionOutput">
+                        请选择一句语音，然后点击"开始识别"
+                    </div>
+                    
+                    <div class="demo-output" id="recognitionSteps" style="margin-top: 20px; font-size: 0.95rem;">
+                        <div id="step1Status">1. 语音输入: 等待中...</div>
+                        <div id="step2Status">2. 特征提取: 等待中...</div>
+                        <div id="step3Status">3. 模型匹配: 等待中...</div>
+                        <div id="step4Status">4. 文本输出: 等待中...</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="learning-nav">
+            <button class="nav-btn" id="prevBtn">
+                <i class="fas fa-arrow-left"></i> 上一步
+            </button>
+            
+            <div style="text-align: center;">
+                <div id="stepIndicator">步骤 1/6: 语音处理概述</div>
+            </div>
+            
+            <button class="nav-btn" id="nextBtn">
+                下一步 <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 当前学习步骤
+        let currentStep = 1;
+        const totalSteps = 6;
+        
+        // DOM元素
+        const stepElements = document.querySelectorAll('.path-step');
+        const sectionElements = document.querySelectorAll('.content-section');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
+        const stepIndicator = document.getElementById('stepIndicator');
+        
+        // 步骤标题
+        const stepTitles = [
+            "语音处理概述",
+            "语音输入原理",
+            "语音识别流程",
+            "声纹识别技术",
+            "应用场景演示",
+            "语音识别模拟器"
+        ];
+        
+        // 初始化页面
+        function initPage() {
+            updateStepDisplay();
+            
+            // 设置步骤点击事件
+            stepElements.forEach(step => {
+                step.addEventListener('click', () => {
+                    const stepNumber = parseInt(step.getAttribute('data-step'));
+                    goToStep(stepNumber);
+                });
+            });
+            
+            // 设置导航按钮事件
+            prevBtn.addEventListener('click', goToPrevStep);
+            nextBtn.addEventListener('click', goToNextStep);
+            
+            // 初始化声纹识别交互
+            initVoiceprintDemo();
+            
+            // 初始化应用场景交互
+            initScenariosDemo();
+            
+            // 初始化语音识别模拟器
+            initRecognitionSimulator();
+            
+            // 初始禁用上一步按钮
+            prevBtn.disabled = true;
+        }
+        
+        // 跳转到指定步骤
+        function goToStep(stepNumber) {
+            if (stepNumber < 1 || stepNumber > totalSteps) return;
+            
+            currentStep = stepNumber;
+            updateStepDisplay();
+        }
+        
+        // 上一步
+        function goToPrevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateStepDisplay();
+            }
+        }
+        
+        // 下一步
+        function goToNextStep() {
+            if (currentStep < totalSteps) {
+                currentStep++;
+                updateStepDisplay();
+            }
+        }
+        
+        // 更新步骤显示
+        function updateStepDisplay() {
+            // 更新步骤指示器
+            stepElements.forEach((step, index) => {
+                const stepNumber = index + 1;
+                
+                step.classList.remove('active', 'completed');
+                
+                if (stepNumber === currentStep) {
+                    step.classList.add('active');
+                } else if (stepNumber < currentStep) {
+                    step.classList.add('completed');
+                }
+            });
+            
+            // 更新内容区域
+            sectionElements.forEach((section, index) => {
+                const stepNumber = index + 1;
+                
+                section.classList.remove('active');
+                
+                if (stepNumber === currentStep) {
+                    section.classList.add('active');
+                }
+            });
+            
+            // 更新进度条
+            const progressPercentage = (currentStep / totalSteps) * 100;
+            progressBar.style.width = `${progressPercentage}%`;
+            
+            // 更新进度文本
+            progressText.textContent = `学习进度: ${currentStep}/${totalSteps} (${stepTitles[currentStep-1]})`;
+            
+            // 更新步骤指示器
+            stepIndicator.textContent = `步骤 ${currentStep}/${totalSteps}: ${stepTitles[currentStep-1]}`;
+            
+            // 更新导航按钮状态
+            prevBtn.disabled = currentStep === 1;
+            nextBtn.disabled = currentStep === totalSteps;
+            
+            // 如果是最后一步，更改按钮文本
+            if (currentStep === totalSteps) {
+                nextBtn.innerHTML = '完成学习 <i class="fas fa-check"></i>';
+            } else {
+                nextBtn.innerHTML = '下一步 <i class="fas fa-arrow-right"></i>';
+            }
+        }
+        
+        // 初始化声纹识别演示
+        function initVoiceprintDemo() {
+            const recognizeUserA = document.getElementById('recognizeUserA');
+            const recognizeUserB = document.getElementById('recognizeUserB');
+            const recognizeUserC = document.getElementById('recognizeUserC');
+            const voiceprintOutput = document.getElementById('voiceprintOutput');
+            
+            recognizeUserA.addEventListener('click', () => {
+                voiceprintOutput.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> 识别成功！这是用户A的声纹特征。</span><br>声纹特征匹配度: 98.7%';
+                
+                // 高亮显示对应的声纹图
+                document.getElementById('voiceprint1').style.boxShadow = '0 0 0 3px #4CAF50';
+                setTimeout(() => {
+                    document.getElementById('voiceprint1').style.boxShadow = 'none';
+                }, 2000);
+            });
+            
+            recognizeUserB.addEventListener('click', () => {
+                voiceprintOutput.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> 识别成功！这是用户B的声纹特征。</span><br>声纹特征匹配度: 96.2%';
+                
+                document.getElementById('voiceprint2').style.boxShadow = '0 0 0 3px #4CAF50';
+                setTimeout(() => {
+                    document.getElementById('voiceprint2').style.boxShadow = 'none';
+                }, 2000);
+            });
+            
+            recognizeUserC.addEventListener('click', () => {
+                voiceprintOutput.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> 识别成功！这是用户C的声纹特征。</span><br>声纹特征匹配度: 97.5%';
+                
+                document.getElementById('voiceprint3').style.boxShadow = '0 0 0 3px #4CAF50';
+                setTimeout(() => {
+                    document.getElementById('voiceprint3').style.boxShadow = 'none';
+                }, 2000);
+            });
+        }
+        
+        // 初始化应用场景演示
+        function initScenariosDemo() {
+            const scenarioCards = document.querySelectorAll('.scenario-card');
+            const carControl = document.getElementById('carControl');
+            const carMonitor = document.getElementById('carMonitor');
+            const carEntertainment = document.getElementById('carEntertainment');
+            const carNavigation = document.getElementById('carNavigation');
+            const carOutput = document.getElementById('carOutput');
+            
+            // 场景卡片点击效果
+            scenarioCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const scenario = card.getAttribute('data-scenario');
+                    let message = '';
+                    
+                    switch(scenario) {
+                        case 'input':
+                            message = '语音输入法：将您的语音实时转换为文字，支持普通话和多种方言，输入效率比打字快2-3倍。';
+                            break;
+                        case 'home':
+                            message = '智能家居：通过语音控制家中的灯光、空调、电视等设备，实现"动口不动手"的智能生活。';
+                            break;
+                        case 'car':
+                            message = '车载语音助手：在驾驶过程中，通过语音控制导航、音乐、空调等，让您专注驾驶，提升安全性。';
+                            break;
+                        case 'service':
+                            message = '智能客服：提供7×24小时自动应答服务，能够理解用户问题并给出准确回答，提升客户服务效率。';
+                            break;
+                        case 'education':
+                            message = '智慧教育：通过语音识别技术进行口语评测，帮助语言学习者纠正发音，提升学习效果。';
+                            break;
+                        case 'robot':
+                            message = '服务机器人：在商场、餐厅、医院等场所，通过语音交互为用户提供导览、咨询和帮助服务。';
+                            break;
+                    }
+                    
+                    // 显示提示
+                    const tip = document.createElement('div');
+                    tip.style.position = 'fixed';
+                    tip.style.top = '50%';
+                    tip.style.left = '50%';
+                    tip.style.transform = 'translate(-50%, -50%)';
+                    tip.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
+                    tip.style.color = 'white';
+                    tip.style.padding = '20px';
+                    tip.style.borderRadius = '10px';
+                    tip.style.zIndex = '1000';
+                    tip.style.maxWidth = '400px';
+                    tip.style.textAlign = 'center';
+                    tip.innerHTML = `<h3>${card.querySelector('.scenario-title').textContent}</h3><p>${message}</p>`;
+                    
+                    document.body.appendChild(tip);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(tip);
+                    }, 3000);
+                });
+            });
+            
+            // 车载功能演示
+            carControl.addEventListener('click', () => {
+                carOutput.innerHTML = '<span style="color: #4361ee;"><i class="fas fa-check-circle"></i> 车辆控制功能已启动</span><br>正在调节车内空调温度至22°C，车窗已关闭，后视镜角度已调整。';
+            });
+            
+            carMonitor.addEventListener('click', () => {
+                carOutput.innerHTML = '<span style="color: #FF9800;"><i class="fas fa-exclamation-triangle"></i> 驾驶行为监控提醒</span><br>检测到您已连续驾驶2小时，建议休息。请注意安全驾驶，避免疲劳。';
+            });
+            
+            carEntertainment.addEventListener('click', () => {
+                carOutput.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-music"></i> 娱乐系统已启动</span><br>正在播放您喜欢的音乐列表：周杰伦 - 七里香。';
+            });
+            
+            carNavigation.addEventListener('click', () => {
+                carOutput.innerHTML = '<span style="color: #4361ee;"><i class="fas fa-map-marked-alt"></i> 智能导航已启动</span><br>已规划最优路线到市中心，全程15公里，预计需要30分钟。';
+            });
+        }
+        
+        // 初始化语音识别模拟器
+        function initRecognitionSimulator() {
+            const startBtn = document.getElementById('startRecognition');
+            const resetBtn = document.getElementById('resetRecognition');
+            const speechSelect = document.getElementById('speechSelect');
+            const recognitionOutput = document.getElementById('recognitionOutput');
+            
+            // 步骤状态元素
+            const step1Status = document.getElementById('step1Status');
+            const step2Status = document.getElementById('step2Status');
+            const step3Status = document.getElementById('step3Status');
+            const step4Status = document.getElementById('step4Status');
+            
+            // 流程步骤元素
+            const stepMic = document.getElementById('stepMic');
+            const stepFeature = document.getElementById('stepFeature');
+            const stepModel = document.getElementById('stepModel');
+            const stepOutput = document.getElementById('stepOutput');
+            const connector1 = document.getElementById('connector1');
+            const connector2 = document.getElementById('connector2');
+            const connector3 = document.getElementById('connector3');
+            const simulationWave = document.getElementById('simulationWave');
+            
+            // 重置模拟器
+            function resetSimulator() {
+                // 重置步骤状态
+                step1Status.innerHTML = '1. 语音输入: 等待中...';
+                step2Status.innerHTML = '2. 特征提取: 等待中...';
+                step3Status.innerHTML = '3. 模型匹配: 等待中...';
+                step4Status.innerHTML = '4. 文本输出: 等待中...';
+                
+                // 重置流程步骤样式
+                stepMic.style.backgroundColor = 'white';
+                stepFeature.style.backgroundColor = 'white';
+                stepModel.style.backgroundColor = 'white';
+                stepOutput.style.backgroundColor = 'white';
+                
+                connector1.style.backgroundColor = '#4cc9f0';
+                connector2.style.backgroundColor = '#4cc9f0';
+                connector3.style.backgroundColor = '#4cc9f0';
+                
+                // 重置输出
+                recognitionOutput.textContent = '请选择一句语音，然后点击"开始识别"';
+                
+                // 重置波形动画
+                simulationWave.style.opacity = '1';
+                
+                // 启用开始按钮
+                startBtn.disabled = false;
+                startBtn.innerHTML = '<i class="fas fa-play"></i> 开始识别';
+            }
+            
+            // 开始识别模拟
+            function startRecognition() {
+                const selectedSpeech = speechSelect.value;
+                
+                // 禁用开始按钮
+                startBtn.disabled = true;
+                startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 识别中...';
+                
+                // 重置步骤状态
+                resetSimulator();
+                
+                // 步骤1: 语音输入
+                setTimeout(() => {
+                    stepMic.style.backgroundColor = '#e8f4fd';
+                    step1Status.innerHTML = '1. 语音输入: <span style="color: #4CAF50;">进行中...</span>';
+                    recognitionOutput.textContent = `正在接收语音: "${selectedSpeech}"`;
+                    
+                    // 增强波形动画
+                    simulationWave.style.opacity = '1';
+                }, 500);
+                
+                // 步骤2: 特征提取
+                setTimeout(() => {
+                    stepFeature.style.backgroundColor = '#e8f4fd';
+                    connector1.style.backgroundColor = '#4CAF50';
+                    step2Status.innerHTML = '2. 特征提取: <span style="color: #4CAF50;">进行中...</span>';
+                    recognitionOutput.textContent = '正在提取语音特征 (MFCC特征提取中...)';
+                }, 2000);
+                
+                // 步骤3: 模型匹配
+                setTimeout(() => {
+                    stepModel.style.backgroundColor = '#e8f4fd';
+                    connector2.style.backgroundColor = '#4CAF50';
+                    step3Status.innerHTML = '3. 模型匹配: <span style="color: #4CAF50;">进行中...</span>';
+                    recognitionOutput.textContent = '正在匹配声学模型和语言模型...';
+                }, 3500);
+                
+                // 步骤4: 文本输出
+                setTimeout(() => {
+                    stepOutput.style.backgroundColor = '#e8f4fd';
+                    connector3.style.backgroundColor = '#4CAF50';
+                    step4Status.innerHTML = '4. 文本输出: <span style="color: #4CAF50;">完成！</span>';
+                    
+                    // 显示识别结果
+                    recognitionOutput.innerHTML = `<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> 识别成功！</span><br><strong>识别结果:</strong> ${selectedSpeech}`;
+                    
+                    // 减弱波形动画
+                    simulationWave.style.opacity = '0.5';
+                    
+                    // 恢复开始按钮
+                    setTimeout(() => {
+                        startBtn.disabled = false;
+                        startBtn.innerHTML = '<i class="fas fa-play"></i> 开始识别';
+                    }, 1000);
+                }, 5000);
+            }
+            
+            // 绑定事件
+            startBtn.addEventListener('click', startRecognition);
+            resetBtn.addEventListener('click', resetSimulator);
+            
+            // 初始重置
+            resetSimulator();
+        }
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', initPage);
+        
+        // 添加键盘导航支持
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                goToPrevStep();
+            } else if (e.key === 'ArrowRight') {
+                goToNextStep();
+            }
+        });
+    </script>
+</body>
+</html>
