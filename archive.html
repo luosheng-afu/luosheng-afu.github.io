@@ -14,17 +14,21 @@ description: "「临时网页」"
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>计算机视觉基础学习系统 - 项目6：食堂菜品识别</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --accent-color: #4cc9f0;
-            --success-color: #4caf50;
-            --warning-color: #ff9800;
-            --light-bg: #f8f9fa;
-            --dark-text: #2c3e50;
-            --light-text: #6c757d;
+            --primary-color: #3a86ff;
+            --secondary-color: #8338ec;
+            --accent-color: #ff006e;
+            --success-color: #06d6a0;
+            --warning-color: #ffbe0b;
+            --dark-color: #2b2d42;
+            --light-color: #f8f9fa;
+            --text-dark: #343a40;
+            --text-light: #6c757d;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --hover-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
         }
         
         * {
@@ -35,32 +39,33 @@ description: "「临时网页」"
         }
         
         body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
-            color: var(--dark-text);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8edf5 100%);
+            color: var(--text-dark);
             line-height: 1.6;
             min-height: 100vh;
             overflow-x: hidden;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
         
-        header {
+        /* 头部区域 */
+        .header {
             text-align: center;
-            padding: 30px 20px;
+            padding: 40px 20px;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             border-radius: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(67, 97, 238, 0.2);
+            margin-bottom: 40px;
+            box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
         }
         
-        header::before {
+        .header::before {
             content: "";
             position: absolute;
             width: 300px;
@@ -71,81 +76,78 @@ description: "「临时网页」"
             right: -100px;
         }
         
-        header h1 {
+        .header h1 {
             font-size: 2.8rem;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             position: relative;
             z-index: 1;
         }
         
-        header p {
-            font-size: 1.2rem;
+        .header h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
             opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
             max-width: 800px;
             margin: 0 auto;
+            opacity: 0.9;
             position: relative;
             z-index: 1;
         }
         
-        .learning-path {
+        /* 导航标签 */
+        .tabs-container {
             display: flex;
             justify-content: center;
-            margin: 40px 0;
+            margin-bottom: 40px;
             flex-wrap: wrap;
             gap: 10px;
         }
         
-        .path-step {
-            padding: 15px 25px;
+        .tab {
+            padding: 16px 32px;
             background-color: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
             border-radius: 50px;
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border: 2px solid transparent;
+            gap: 10px;
         }
         
-        .path-step.active {
+        .tab:hover {
+            background-color: rgba(58, 134, 255, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        .tab.active {
             background-color: var(--primary-color);
             color: white;
-            border-color: var(--primary-color);
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 8px 20px rgba(58, 134, 255, 0.3);
         }
         
-        .path-step.completed {
-            background-color: var(--success-color);
-            color: white;
+        .tab i {
+            font-size: 1.2rem;
         }
         
-        .step-number {
-            width: 30px;
-            height: 30px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 10px;
-            font-size: 0.9rem;
-        }
-        
-        .active .step-number {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        
+        /* 内容区域 */
         .content-area {
             background-color: white;
             border-radius: 20px;
             padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-            min-height: 500px;
+            margin-bottom: 40px;
+            box-shadow: var(--card-shadow);
+            min-height: 600px;
             position: relative;
-            overflow: hidden;
         }
         
         .content-section {
@@ -153,30 +155,16 @@ description: "「临时网页」"
             animation: fadeInUp 0.8s ease;
         }
         
-        .content-section.active {
-            display: block;
-        }
-        
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
-        .section-title {
-            font-size: 2.2rem;
-            color: var(--secondary-color);
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 3px solid var(--accent-color);
+        .content-section.active {
+            display: block;
         }
         
-        .section-subtitle {
-            font-size: 1.5rem;
-            color: var(--primary-color);
-            margin: 30px 0 15px;
-        }
-        
-        /* 完成学习页面样式 */
+        /* 完成学习页面 */
         .completion-section {
             display: none;
             text-align: center;
@@ -216,12 +204,12 @@ description: "「临时网页」"
             margin-right: auto;
         }
         
-        .summary-box {
-            background-color: #f0f7ff;
+        .summary-container {
+            background: linear-gradient(135deg, #f8f9ff, #eef1ff);
             border-radius: 15px;
-            padding: 30px;
+            padding: 40px;
             margin: 40px auto;
-            max-width: 800px;
+            max-width: 1000px;
             text-align: left;
             border-left: 5px solid var(--accent-color);
         }
@@ -229,35 +217,61 @@ description: "「临时网页」"
         .summary-title {
             font-size: 1.8rem;
             color: var(--secondary-color);
-            margin-bottom: 20px;
+            margin-bottom: 30px;
             text-align: center;
         }
         
-        .summary-list {
-            list-style-type: none;
-            margin: 20px 0;
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
         }
         
-        .summary-list li {
-            padding: 15px;
-            margin-bottom: 10px;
+        .summary-item {
             background-color: white;
             border-radius: 10px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
             border-left: 4px solid var(--primary-color);
+        }
+        
+        .summary-item h3 {
+            color: var(--dark-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary-item h3 i {
+            color: var(--primary-color);
+        }
+        
+        .summary-item ul {
+            list-style-type: none;
+        }
+        
+        .summary-item li {
+            padding: 8px 0;
+            border-bottom: 1px dashed var(--text-light);
             display: flex;
             align-items: center;
         }
         
-        .summary-list i {
-            color: var(--primary-color);
-            margin-right: 15px;
-            font-size: 1.2rem;
+        .summary-item li:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-item li i {
+            color: var(--success-color);
+            margin-right: 10px;
         }
         
         .completion-actions {
             display: flex;
             justify-content: center;
-            gap: 20px;
+            gap: 25px;
             margin-top: 50px;
             flex-wrap: wrap;
         }
@@ -265,7 +279,7 @@ description: "「临时网页」"
         .completion-btn {
             padding: 18px 35px;
             font-size: 1.2rem;
-            border-radius: 50px;
+            border-radius: 12px;
             border: none;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -273,7 +287,7 @@ description: "「临时网页」"
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
         }
         
         .btn-restart {
@@ -284,7 +298,7 @@ description: "「临时网页」"
         .btn-restart:hover {
             background-color: var(--secondary-color);
             transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(67, 97, 238, 0.3);
+            box-shadow: var(--hover-shadow);
         }
         
         .btn-review {
@@ -294,291 +308,481 @@ description: "「临时网页」"
         }
         
         .btn-review:hover {
-            background-color: #f0f7ff;
+            background-color: rgba(58, 134, 255, 0.1);
             transform: translateY(-5px);
-            box-shadow: 0 12px 25px rgba(67, 97, 238, 0.2);
         }
         
-        /* 动画演示容器 */
-        .animation-container {
-            background: linear-gradient(135deg, #f0f4f8, #e1e8f0);
-            border-radius: 15px;
-            padding: 30px;
-            margin: 30px 0;
-            position: relative;
-            min-height: 300px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .animation-title {
-            font-size: 1.3rem;
+        .section-title {
+            font-size: 2.2rem;
             color: var(--secondary-color);
-            margin-bottom: 20px;
-            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--accent-color);
         }
         
-        /* 语音波形动画 */
-        .voice-wave-demo {
-            width: 100%;
-            height: 200px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .section-subtitle {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin: 30px 0 20px;
         }
         
-        .voice-wave {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 90%;
-            height: 150px;
+        /* 概念卡片 */
+        .concept-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
         }
         
-        .wave-bar {
-            width: 12px;
-            height: 30px;
-            background-color: var(--primary-color);
-            margin: 0 4px;
-            border-radius: 6px;
-            animation: voiceWave 1.5s ease-in-out infinite;
-            opacity: 0.8;
-        }
-        
-        @keyframes voiceWave {
-            0%, 100% { height: 30px; }
-            25% { height: 100px; }
-            50% { height: 60px; }
-            75% { height: 120px; }
-        }
-        
-        .wave-bar:nth-child(2) { animation-delay: 0.1s; }
-        .wave-bar:nth-child(3) { animation-delay: 0.2s; }
-        .wave-bar:nth-child(4) { animation-delay: 0.3s; }
-        .wave-bar:nth-child(5) { animation-delay: 0.4s; }
-        .wave-bar:nth-child(6) { animation-delay: 0.5s; }
-        .wave-bar:nth-child(7) { animation-delay: 0.6s; }
-        .wave-bar:nth-child(8) { animation-delay: 0.7s; }
-        .wave-bar:nth-child(9) { animation-delay: 0.8s; }
-        
-        /* 语音识别流程动画 */
-        .recognition-process {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            margin-top: 30px;
-            position: relative;
-        }
-        
-        .process-step {
-            width: 150px;
-            height: 150px;
+        .concept-card {
             background-color: white;
             border-radius: 15px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            position: relative;
-            z-index: 2;
-            transition: transform 0.3s ease;
-        }
-        
-        .process-step:hover {
-            transform: translateY(-10px);
-        }
-        
-        .process-step-icon {
-            font-size: 2.5rem;
-            color: var(--primary-color);
-            margin-bottom: 15px;
-        }
-        
-        .process-step-title {
-            font-weight: 600;
-            color: var(--secondary-color);
-            text-align: center;
-        }
-        
-        .process-connector {
-            height: 4px;
-            background-color: var(--accent-color);
-            flex-grow: 1;
-            margin: 0 10px;
-            position: relative;
-        }
-        
-        .process-connector::after {
-            content: "→";
-            position: absolute;
-            right: -10px;
-            top: -12px;
-            color: var(--accent-color);
-            font-size: 1.5rem;
-        }
-        
-        /* 声纹识别动画 */
-        .voiceprint-demo {
-            display: flex;
-            justify-content: space-around;
-            width: 100%;
-            margin-top: 30px;
-        }
-        
-        .voiceprint {
-            width: 200px;
-            height: 150px;
-            background-color: #2c3e50;
-            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
             position: relative;
             overflow: hidden;
         }
         
-        .voiceprint-line {
-            position: absolute;
-            width: 100%;
-            height: 3px;
-            background-color: var(--accent-color);
-            bottom: 30%;
-            left: 0;
-            transform-origin: left;
+        .concept-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--primary-color);
         }
         
-        .voiceprint-line::before {
+        .concept-card::before {
             content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .concept-icon {
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .concept-title {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+            margin-bottom: 15px;
+        }
+        
+        .concept-desc {
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+        
+        /* 开发流程动画 */
+        .process-container {
+            background: linear-gradient(135deg, #f0f4f8, #e1e8f0);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .process-title {
+            font-size: 1.8rem;
+            color: var(--secondary-color);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            margin: 50px 0;
+        }
+        
+        .process-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 180px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .step-circle {
+            width: 90px;
+            height: 90px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            box-shadow: var(--card-shadow);
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .step-circle::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .step-circle i {
+            position: relative;
+            z-index: 1;
+            transition: color 0.3s ease;
+        }
+        
+        .step-circle.active {
+            border-color: var(--primary-color);
+        }
+        
+        .step-circle.active::before {
+            opacity: 1;
+        }
+        
+        .step-circle.active i {
+            color: white;
+        }
+        
+        .step-number {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            width: 30px;
+            height: 30px;
+            background-color: var(--accent-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        .step-desc {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+        
+        .process-connector {
+            position: absolute;
+            top: 45px;
+            left: 180px;
+            width: calc(100% - 360px);
+            height: 4px;
+            background-color: var(--primary-color);
+            z-index: 1;
+        }
+        
+        .process-connector::after {
+            content: "";
+            position: absolute;
+            right: -10px;
+            top: -8px;
+            width: 20px;
+            height: 20px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+        }
+        
+        /* 任务展示区 */
+        .task-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+        
+        .task-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .task-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--hover-shadow);
+        }
+        
+        .task-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .task-icon {
+            width: 70px;
+            height: 70px;
+            background-color: rgba(58, 134, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .task-title {
+            font-size: 1.5rem;
+            color: var(--dark-color);
+        }
+        
+        .task-desc {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+        
+        .task-visual {
+            height: 180px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 计算机视觉任务动画 */
+        .cv-animation {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .image-box {
+            width: 120px;
+            height: 120px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            border: 2px dashed #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-box i {
+            font-size: 2.5rem;
+            color: #adb5bd;
+        }
+        
+        .detection-box {
+            position: absolute;
+            border: 2px solid var(--success-color);
+            background-color: rgba(6, 214, 160, 0.1);
+            border-radius: 5px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+        
+        .segmentation-area {
+            position: absolute;
+            background-color: rgba(255, 0, 110, 0.3);
+            border-radius: 50%;
+        }
+        
+        .tracking-path {
+            position: absolute;
+            width: 200px;
+            height: 80px;
+            border: 2px dashed var(--warning-color);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .tracking-dot {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background-color: var(--warning-color);
+            border-radius: 50%;
+            animation: moveAround 5s linear infinite;
+        }
+        
+        @keyframes moveAround {
+            0% { left: 0; top: 0; }
+            25% { left: 185px; top: 0; }
+            50% { left: 185px; top: 65px; }
+            75% { left: 0; top: 65px; }
+            100% { left: 0; top: 0; }
+        }
+        
+        .keypoint {
             position: absolute;
             width: 10px;
             height: 10px;
             background-color: var(--accent-color);
             border-radius: 50%;
-            top: -4px;
-            left: 0;
-            animation: voiceprintMove 3s linear infinite;
         }
         
-        @keyframes voiceprintMove {
-            0% { left: 0; }
-            100% { left: 100%; }
+        .keypoint-connection {
+            position: absolute;
+            height: 2px;
+            background-color: var(--accent-color);
         }
         
-        .voiceprint-label {
-            text-align: center;
-            margin-top: 15px;
-            font-weight: 600;
-            color: var(--secondary-color);
-        }
-        
-        /* 语音应用场景演示 */
-        .scenarios-grid {
+        /* 应用场景 */
+        .scenes-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
+            gap: 30px;
+            margin: 40px 0;
         }
         
-        .scenario-card {
+        .scene-card {
             background-color: white;
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            padding: 30px;
+            box-shadow: var(--card-shadow);
             transition: all 0.3s ease;
-            cursor: pointer;
+            text-align: center;
             border: 2px solid transparent;
         }
         
-        .scenario-card:hover {
+        .scene-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
-            border-color: var(--accent-color);
+            box-shadow: var(--hover-shadow);
+            border-color: var(--primary-color);
         }
         
-        .scenario-icon {
-            font-size: 2.5rem;
+        .scene-icon {
+            font-size: 3rem;
             color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .scene-title {
+            font-size: 1.4rem;
+            color: var(--dark-color);
             margin-bottom: 15px;
-            text-align: center;
         }
         
-        .scenario-title {
-            font-size: 1.3rem;
-            color: var(--secondary-color);
-            margin-bottom: 10px;
-            text-align: center;
+        .scene-desc {
+            color: var(--text-light);
         }
         
-        .scenario-desc {
-            color: var(--light-text);
-            text-align: center;
-        }
-        
-        /* 交互式演示区域 */
-        .interactive-demo {
-            background-color: #f0f7ff;
+        /* 交互演示区 */
+        .demo-container {
+            background: linear-gradient(135deg, #f8f9ff, #eef1ff);
             border-radius: 15px;
-            padding: 30px;
-            margin-top: 40px;
-            border: 2px dashed var(--accent-color);
+            padding: 40px;
+            margin: 40px 0;
+            border: 2px dashed var(--primary-color);
         }
         
         .demo-title {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             color: var(--secondary-color);
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             text-align: center;
         }
         
-        .demo-controls {
+        .demo-area {
             display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 20px;
+            justify-content: space-between;
+            align-items: center;
             flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .demo-controls {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .demo-controls h3 {
+            color: var(--dark-color);
+            margin-bottom: 20px;
+        }
+        
+        .demo-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
         }
         
         .demo-btn {
-            padding: 12px 25px;
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50px;
+            padding: 12px 24px;
+            background-color: white;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.2);
+            gap: 10px;
         }
         
         .demo-btn:hover {
-            background-color: var(--secondary-color);
+            background-color: var(--primary-color);
+            color: white;
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
         }
         
-        .demo-btn i {
-            margin-right: 8px;
-        }
-        
-        .demo-output {
+        .demo-visual {
+            flex: 1;
+            min-width: 300px;
+            height: 300px;
             background-color: white;
             border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-            min-height: 100px;
-            border: 1px solid #e0e0e0;
-            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
         }
         
-        /* 学习导航 */
-        .learning-nav {
+        /* 底部导航 */
+        .footer-nav {
             display: flex;
             justify-content: space-between;
             margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e9ecef;
         }
         
         .nav-btn {
@@ -586,29 +790,37 @@ description: "「临时网页」"
             background-color: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 50px;
+            border-radius: 10px;
             font-size: 1.1rem;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
+            gap: 10px;
+            font-weight: 600;
         }
         
         .nav-btn:hover {
             background-color: var(--secondary-color);
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(67, 97, 238, 0.3);
+            box-shadow: 0 10px 25px rgba(58, 134, 255, 0.3);
         }
         
         .nav-btn:disabled {
-            background-color: #cccccc;
+            background-color: #adb5bd;
             cursor: not-allowed;
             transform: none;
             box-shadow: none;
         }
         
-        .nav-btn i {
-            margin: 0 10px;
+        .nav-btn.prev {
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+        
+        .nav-btn.prev:hover {
+            background-color: rgba(58, 134, 255, 0.1);
         }
         
         /* 完成学习按钮 */
@@ -617,73 +829,79 @@ description: "「临时网页」"
         }
         
         .nav-btn-complete:hover {
-            background-color: #3d8b40;
+            background-color: #06b589;
         }
         
         /* 进度指示器 */
         .progress-container {
-            width: 100%;
-            height: 10px;
-            background-color: #e0e0e0;
-            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
             margin: 30px 0;
-            overflow: hidden;
+            flex-wrap: wrap;
         }
         
-        .progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-            border-radius: 5px;
-            width: 16.6%; /* 初始进度，6个步骤中的第1个 */
-            transition: width 0.5s ease;
+        .progress-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .progress-circle {
+            width: 30px;
+            height: 30px;
+            background-color: #e9ecef;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+        
+        .progress-circle.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .progress-circle.completed {
+            background-color: var(--success-color);
+            color: white;
         }
         
         .progress-text {
-            text-align: center;
-            color: var(--light-text);
-            margin-bottom: 10px;
+            color: var(--text-light);
+            font-weight: 600;
         }
         
         /* 响应式设计 */
-        @media (max-width: 992px) {
-            .recognition-process {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .process-step {
-                margin-bottom: 30px;
-                width: 200px;
-            }
-            
-            .process-connector {
-                width: 4px;
-                height: 30px;
-                margin: 10px 0;
-            }
-            
-            .process-connector::after {
-                content: "↓";
-                right: -8px;
-                top: 25px;
-            }
-            
-            .voiceprint-demo {
-                flex-direction: column;
-                align-items: center;
+        @media (max-width: 1100px) {
+            .process-steps {
+                flex-wrap: wrap;
+                justify-content: center;
                 gap: 40px;
             }
             
-            header h1 {
-                font-size: 2.2rem;
+            .process-connector {
+                display: none;
             }
             
-            .completion-title {
-                font-size: 2.5rem;
+            .demo-area {
+                flex-direction: column;
             }
         }
         
         @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.2rem;
+            }
+            
+            .header h2 {
+                font-size: 1.5rem;
+            }
+            
             .content-area {
                 padding: 25px;
             }
@@ -692,18 +910,28 @@ description: "「临时网页」"
                 font-size: 1.8rem;
             }
             
-            .learning-path {
+            .tabs-container {
                 flex-direction: column;
                 align-items: center;
             }
             
-            .path-step {
+            .tab {
                 width: 90%;
                 justify-content: center;
             }
             
+            .footer-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
             .completion-title {
-                font-size: 2rem;
+                font-size: 2.2rem;
             }
             
             .completion-subtitle {
@@ -721,512 +949,550 @@ description: "「临时网页」"
             }
         }
         
+        /* 工具类样式 */
         .highlight {
-            background-color: #fff9c4;
-            padding: 2px 5px;
-            border-radius: 3px;
+            background-color: rgba(255, 190, 11, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
             font-weight: 600;
         }
         
-        .explanation {
-            background-color: #e8f4fd;
+        .definition-box {
+            background-color: rgba(58, 134, 255, 0.05);
             border-left: 5px solid var(--primary-color);
-            padding: 20px;
-            margin: 25px 0;
+            padding: 25px;
+            margin: 30px 0;
             border-radius: 0 10px 10px 0;
         }
         
-        .explanation-title {
+        .definition-box h3 {
             color: var(--secondary-color);
             margin-bottom: 10px;
         }
         
-        .fun-fact {
-            background-color: #f0f7ff;
+        .tip-box {
+            background-color: rgba(6, 214, 160, 0.1);
             border-radius: 10px;
             padding: 20px;
             margin: 25px 0;
-            border-left: 5px solid var(--accent-color);
+            border-left: 5px solid var(--success-color);
         }
         
-        .fact-icon {
-            color: var(--accent-color);
+        .tip-icon {
+            color: var(--success-color);
             margin-right: 10px;
-        }
-        
-        .key-point {
-            background-color: #f9f5ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border: 1px solid #e0d6ff;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>语音处理动画教学</h1>
-            <p>通过交互式动画演示，零基础学习语音处理技术原理与应用场景</p>
+        <!-- 头部区域 -->
+        <header class="header">
+            <h1>项目6：食堂菜品识别 — 计算机视觉</h1>
+            <h2>CV基础概述</h2>
+            <p>通过交互式动画学习计算机视觉的基本概念、开发流程、基本任务和应用场景</p>
         </header>
         
-        <div class="learning-path">
-            <div class="path-step active" data-step="1">
-                <div class="step-number">1</div>
-                <span>语音处理概述</span>
-            </div>
-            <div class="path-step" data-step="2">
-                <div class="step-number">2</div>
-                <span>语音输入原理</span>
-            </div>
-            <div class="path-step" data-step="3">
-                <div class="step-number">3</div>
-                <span>语音识别流程</span>
-            </div>
-            <div class="path-step" data-step="4">
-                <div class="step-number">4</div>
-                <span>声纹识别技术</span>
-            </div>
-            <div class="path-step" data-step="5">
-                <div class="step-number">5</div>
-                <span>应用场景演示</span>
-            </div>
-            <div class="path-step" data-step="6">
-                <div class="step-number">6</div>
-                <span>语音识别模拟器</span>
-            </div>
-        </div>
-        
+        <!-- 进度指示器 -->
         <div class="progress-container">
-            <div class="progress-bar" id="progressBar"></div>
+            <div class="progress-item">
+                <div class="progress-circle active">1</div>
+                <div class="progress-text">基本概念</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-circle">2</div>
+                <div class="progress-text">开发流程</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-circle">3</div>
+                <div class="progress-text">基本任务</div>
+            </div>
+            <div class="progress-item">
+                <div class="progress-circle">4</div>
+                <div class="progress-text">应用场景</div>
+            </div>
         </div>
-        <div class="progress-text" id="progressText">学习进度: 1/6 (语音处理概述)</div>
         
+        <!-- 导航标签 -->
+        <div class="tabs-container">
+            <div class="tab active" data-tab="concept">
+                <i class="fas fa-lightbulb"></i>
+                <span>基本概念</span>
+            </div>
+            <div class="tab" data-tab="process">
+                <i class="fas fa-project-diagram"></i>
+                <span>开发流程</span>
+            </div>
+            <div class="tab" data-tab="tasks">
+                <i class="fas fa-tasks"></i>
+                <span>基本任务</span>
+            </div>
+            <div class="tab" data-tab="applications">
+                <i class="fas fa-globe-americas"></i>
+                <span>应用场景</span>
+            </div>
+        </div>
+        
+        <!-- 内容区域 -->
         <div class="content-area">
-            <!-- 步骤1: 语音处理概述 -->
-            <section id="step1" class="content-section active">
-                <h2 class="section-title">语音处理概述</h2>
+            <!-- 基本概念部分 -->
+            <section id="concept" class="content-section active">
+                <h2 class="section-title">计算机视觉的基本概念</h2>
                 
-                <div class="explanation">
-                    <h3 class="explanation-title">什么是语音处理？</h3>
-                    <p>语音处理技术使计算机能够识别、理解和合成人类语音，架起了人与物联网、互联网服务之间的桥梁。</p>
-                    <p>我们正在步入万物互联、万物智能的时代，语音交互让我们能够在<strong>任何时间、任何地方、任何设备</strong>上进行自然交流。</p>
+                <div class="definition-box">
+                    <h3>什么是计算机视觉？</h3>
+                    <p>计算机视觉是研究如何使用计算机和摄像机来替代人眼完成对目标的识别、跟踪和测量等工作，并进一步通过计算机进行图形图像处理，使它成为更适合人眼观察或传送给仪器检测的图像。</p>
                 </div>
                 
-                <div class="animation-container">
-                    <h3 class="animation-title">语音交互系统架构演示</h3>
-                    <div class="recognition-process">
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-user"></i>
+                <div class="concept-cards">
+                    <div class="concept-card">
+                        <div class="concept-icon">
+                            <i class="fas fa-carrot"></i>
+                        </div>
+                        <h3 class="concept-title">蔬菜自动识别</h3>
+                        <p class="concept-desc">通过计算机视觉技术，自动识别蔬菜的种类、新鲜度和质量，应用于智能农业和自动分拣系统。</p>
+                    </div>
+                    
+                    <div class="concept-card">
+                        <div class="concept-icon">
+                            <i class="fas fa-user-check"></i>
+                        </div>
+                        <h3 class="concept-title">高铁刷脸进站</h3>
+                        <p class="concept-desc">通过人脸识别技术，实现快速、安全的身份验证，提高交通系统的效率和安全性。</p>
+                    </div>
+                    
+                    <div class="concept-card">
+                        <div class="concept-icon">
+                            <i class="fas fa-portrait"></i>
+                        </div>
+                        <h3 class="concept-title">人像自动抠图</h3>
+                        <p class="concept-desc">利用图像分割技术，自动将人像从背景中分离出来，广泛应用于摄影、视频制作和虚拟背景。</p>
+                    </div>
+                </div>
+                
+                <div class="demo-container">
+                    <h3 class="demo-title">计算机视觉原理演示</h3>
+                    <div class="demo-area">
+                        <div class="demo-controls">
+                            <h3>模拟计算机视觉处理过程</h3>
+                            <p>点击下方按钮，查看计算机如何"看到"并理解图像：</p>
+                            
+                            <div class="demo-buttons">
+                                <button class="demo-btn" id="showOriginal">
+                                    <i class="fas fa-image"></i> 原始图像
+                                </button>
+                                <button class="demo-btn" id="showProcessed">
+                                    <i class="fas fa-cogs"></i> 处理过程
+                                </button>
+                                <button class="demo-btn" id="showResult">
+                                    <i class="fas fa-eye"></i> 视觉理解
+                                </button>
                             </div>
-                            <div class="process-step-title">用户语音</div>
+                            
+                            <div id="demo-description">
+                                点击按钮查看计算机视觉如何处理和理解图像信息
+                            </div>
+                        </div>
+                        
+                        <div class="demo-visual" id="cv-demo">
+                            <div class="cv-animation">
+                                <div class="image-box" id="original-image">
+                                    <i class="fas fa-carrot"></i>
+                                    <i class="fas fa-apple-alt" style="position: absolute; top: 30px; left: 30px; font-size: 1.8rem; color: #ff6b6b;"></i>
+                                    <i class="fas fa-lemon" style="position: absolute; bottom: 20px; right: 20px; font-size: 1.5rem; color: #ffd166;"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tip-box">
+                    <p><i class="fas fa-lightbulb tip-icon"></i> <strong>你知道吗？</strong> 计算机视觉的目标是让计算机能够像人类一样理解和解释视觉世界，这项技术是人工智能的重要分支之一。</p>
+                </div>
+            </section>
+            
+            <!-- 开发流程部分 -->
+            <section id="process" class="content-section">
+                <h2 class="section-title">计算机视觉开发流程</h2>
+                
+                <div class="definition-box">
+                    <h3>计算机视觉图像系统的处理流程</h3>
+                    <p>计算机视觉系统通常遵循一个标准化的处理流程，从图像获取到最终的分析结果，每个步骤都有其特定的目的和功能。</p>
+                </div>
+                
+                <div class="process-container">
+                    <h3 class="process-title">计算机视觉开发六步流程</h3>
+                    
+                    <div class="process-steps">
+                        <div class="process-step">
+                            <div class="step-circle" id="step1">
+                                <i class="fas fa-camera"></i>
+                                <div class="step-number">1</div>
+                            </div>
+                            <h4 class="step-title">图像获取</h4>
+                            <p class="step-desc">通过图像传感器来获取事物的图像</p>
+                        </div>
+                        
+                        <div class="process-step">
+                            <div class="step-circle" id="step2">
+                                <i class="fas fa-filter"></i>
+                                <div class="step-number">2</div>
+                            </div>
+                            <h4 class="step-title">图像预处理</h4>
+                            <p class="step-desc">使图像满足后续图像处理的要求</p>
+                        </div>
+                        
+                        <div class="process-step">
+                            <div class="step-circle" id="step3">
+                                <i class="fas fa-search"></i>
+                                <div class="step-number">3</div>
+                            </div>
+                            <h4 class="step-title">特征提取</h4>
+                            <p class="step-desc">从图像中提取图像特征，为后续的处理做准备</p>
                         </div>
                         
                         <div class="process-connector"></div>
-                        
+                    </div>
+                    
+                    <div class="process-steps" style="margin-top: 80px;">
                         <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-microphone"></i>
-                            </div>
-                            <div class="process-step-title">语音采集</div>
-                        </div>
-                        
-                        <div class="process-connector"></div>
-                        
-                        <div class="process-step">
-                            <div class="process-step-icon">
+                            <div class="step-circle" id="step4">
                                 <i class="fas fa-brain"></i>
+                                <div class="step-number">4</div>
                             </div>
-                            <div class="process-step-title">语音处理</div>
+                            <h4 class="step-title">数据建模</h4>
+                            <p class="step-desc">进一步对得到的数据进行更深入的处理</p>
                         </div>
                         
-                        <div class="process-connector"></div>
+                        <div class="process-step">
+                            <div class="step-circle" id="step5">
+                                <i class="fas fa-object-group"></i>
+                                <div class="step-number">5</div>
+                            </div>
+                            <h4 class="step-title">目标提取</h4>
+                            <p class="step-desc">提取有价值的，用于后继处理的感兴趣部分</p>
+                        </div>
                         
                         <div class="process-step">
-                            <div class="process-step-icon">
+                            <div class="step-circle" id="step6">
+                                <i class="fas fa-chart-bar"></i>
+                                <div class="step-number">6</div>
+                            </div>
+                            <h4 class="step-title">结果分析</h4>
+                            <p class="step-desc">对提取的目标进行分析和解释</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="demo-container">
+                    <h3 class="demo-title">开发流程模拟演示</h3>
+                    <div class="demo-area">
+                        <div class="demo-controls">
+                            <h3>体验完整的CV开发流程</h3>
+                            <p>点击下方按钮，逐步体验计算机视觉开发流程：</p>
+                            
+                            <div class="demo-buttons">
+                                <button class="demo-btn" id="startProcess">
+                                    <i class="fas fa-play"></i> 开始流程
+                                </button>
+                                <button class="demo-btn" id="resetProcess">
+                                    <i class="fas fa-redo"></i> 重置
+                                </button>
+                                <button class="demo-btn" id="autoProcess">
+                                    <i class="fas fa-bolt"></i> 自动演示
+                                </button>
+                            </div>
+                            
+                            <div id="process-description">
+                                点击"开始流程"按钮，查看计算机视觉开发的完整步骤
+                            </div>
+                        </div>
+                        
+                        <div class="demo-visual" id="process-demo">
+                            <div class="cv-animation">
+                                <div class="image-box" id="process-image">
+                                    <i class="fas fa-image"></i>
+                                </div>
+                                <div id="process-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- 基本任务部分 -->
+            <section id="tasks" class="content-section">
+                <h2 class="section-title">计算机视觉的基本任务</h2>
+                
+                <div class="definition-box">
+                    <h3>计算机视觉的主要研究方向</h3>
+                    <p>计算机视觉包含多种基本任务，每种任务都致力于解决特定的视觉理解问题，这些任务通常相互关联，共同构成了完整的计算机视觉系统。</p>
+                </div>
+                
+                <div class="task-container">
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-icon">
+                                <i class="fas fa-images"></i>
+                            </div>
+                            <h3 class="task-title">图像识别和分类</h3>
+                        </div>
+                        <p class="task-desc">识别图像中的物体并将其分类到预定义的类别中。这是计算机视觉中最基础的任务之一。</p>
+                        
+                        <div class="task-visual">
+                            <div class="cv-animation">
+                                <div class="image-box">
+                                    <i class="fas fa-carrot" style="color: #ff6b6b;"></i>
+                                    <i class="fas fa-apple-alt" style="position: absolute; top: 30px; left: 30px; font-size: 1.8rem; color: #06d6a0;"></i>
+                                </div>
+                                <div class="detection-box" style="width: 60px; height: 60px; top: 60px; left: 60px;"></div>
+                                <div class="detection-box" style="width: 40px; height: 40px; top: 30px; left: 30px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.9rem; color: var(--text-light);">
+                            <p><strong>主要步骤：</strong> 数据采集 → 图像预处理 → 特征提取 → 分类器训练 → 模型评估</p>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-icon">
+                                <i class="fas fa-bullseye"></i>
+                            </div>
+                            <h3 class="task-title">目标检测</h3>
+                        </div>
+                        <p class="task-desc">在图像中定位和识别多个目标物体，并为每个物体绘制边界框。</p>
+                        
+                        <div class="task-visual">
+                            <div class="cv-animation">
+                                <div class="image-box">
+                                    <i class="fas fa-car" style="color: #3a86ff;"></i>
+                                    <i class="fas fa-bicycle" style="position: absolute; bottom: 20px; right: 20px; font-size: 1.5rem; color: #8338ec;"></i>
+                                </div>
+                                <div class="detection-box" style="width: 70px; height: 50px; top: 40px; left: 30px; border-color: #3a86ff;"></div>
+                                <div class="detection-box" style="width: 40px; height: 40px; bottom: 20px; right: 20px; border-color: #8338ec;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.9rem; color: var(--text-light);">
+                            <p><strong>主要步骤：</strong> 区域选择 → 特征提取 → 特征分类</p>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-icon">
+                                <i class="fas fa-cut"></i>
+                            </div>
+                            <h3 class="task-title">图像分割</h3>
+                        </div>
+                        <p class="task-desc">将图像分割成多个区域或对象，通常用于分离前景和背景。</p>
+                        
+                        <div class="task-visual">
+                            <div class="cv-animation">
+                                <div class="image-box">
+                                    <i class="fas fa-user" style="color: #ff006e;"></i>
+                                </div>
+                                <div class="segmentation-area" style="width: 70px; height: 70px; top: 30px; left: 30px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.9rem; color: var(--text-light);">
+                            <p><strong>主要步骤：</strong> 分析找到前景和背景的颜色阈值 → 将每个像素值与阈值比较并分为两类 → 与原图映射获得前景</p>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-icon">
+                                <i class="fas fa-satellite-dish"></i>
+                            </div>
+                            <h3 class="task-title">目标跟踪</h3>
+                        </div>
+                        <p class="task-desc">在视频序列中跟踪特定目标的位置和运动轨迹。</p>
+                        
+                        <div class="task-visual">
+                            <div class="cv-animation">
+                                <div class="tracking-path"></div>
+                                <div class="tracking-dot"></div>
+                                <div class="image-box" style="width: 40px; height: 40px; position: absolute; top: 30px; left: 30px;">
+                                    <i class="fas fa-basketball-ball" style="color: #ffbe0b;"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.9rem; color: var(--text-light);">
+                            <p><strong>主要步骤：</strong> 通过摄像头捕获图像序列 → 输入计算机计算出目标的位置 → 根据目标特征将每一帧中的同一个目标关联起来</p>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-icon">
+                                <i class="fas fa-map-pin"></i>
+                            </div>
+                            <h3 class="task-title">关键点检测</h3>
+                        </div>
+                        <p class="task-desc">检测图像中物体的关键特征点，如人脸的眼睛、鼻子、嘴巴等。</p>
+                        
+                        <div class="task-visual">
+                            <div class="cv-animation">
+                                <div class="image-box">
+                                    <i class="fas fa-smile" style="color: #8338ec;"></i>
+                                </div>
+                                <div class="keypoint" style="top: 50px; left: 60px;"></div>
+                                <div class="keypoint" style="top: 50px; left: 70px;"></div>
+                                <div class="keypoint" style="top: 60px; left: 65px;"></div>
+                                <div class="keypoint" style="top: 70px; left: 55px;"></div>
+                                <div class="keypoint" style="top: 70px; left: 75px;"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.9rem; color: var(--text-light);">
+                            <p><strong>主要步骤：</strong> 获取待检测的图像 → 得到关键点热力图 → 获得结构化连接信息 → 确定关键点标注</p>
+                        </div>
+                    </div>
+                    
+                    <div class="task-card">
+                        <div class="task-header">
+                            <div class="task-icon">
                                 <i class="fas fa-robot"></i>
                             </div>
-                            <div class="process-step-title">智能响应</div>
+                            <h3 class="task-title">生成对抗网络(GAN)</h3>
+                        </div>
+                        <p class="task-desc">使用两个神经网络相互对抗来生成新的、与原始数据相似的数据。</p>
+                        
+                        <div class="task-visual">
+                            <div class="cv-animation">
+                                <div class="image-box" style="width: 60px; height: 60px; left: 40px;">
+                                    <i class="fas fa-paint-brush" style="color: #06d6a0;"></i>
+                                </div>
+                                <div class="image-box" style="width: 60px; height: 60px; right: 40px;">
+                                    <i class="fas fa-check-circle" style="color: #ff006e;"></i>
+                                </div>
+                                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5rem; color: var(--text-light);">⇄</div>
+                            </div>
+                        </div>
+                        
+                        <div style="font-size: 0.9rem; color: var(--text-light);">
+                            <p><strong>主要组件：</strong> 生成模型(G) → 判别模型(D)</p>
                         </div>
                     </div>
                 </div>
                 
-                <div class="fun-fact">
-                    <p><i class="fas fa-lightbulb fact-icon"></i> <strong>你知道吗？</strong> 普通人打字速度是每分钟60字左右，而讲话每分钟一般是150字左右。语音输入法可以将语音转换为文字，大大提高输入效率。</p>
+                <div class="tip-box">
+                    <p><i class="fas fa-lightbulb tip-icon"></i> <strong>提示：</strong> 这些基本任务并不是孤立的，在实际应用中通常会结合多个任务来解决复杂的问题。例如，一个完整的自动驾驶系统会同时使用目标检测、图像分割和目标跟踪等多种技术。</p>
                 </div>
             </section>
             
-            <!-- 步骤2: 语音输入原理 -->
-            <section id="step2" class="content-section">
-                <h2 class="section-title">语音输入原理</h2>
+            <!-- 应用场景部分 -->
+            <section id="applications" class="content-section">
+                <h2 class="section-title">计算机视觉的应用场景</h2>
                 
-                <div class="explanation">
-                    <h3 class="explanation-title">语音如何变成文字？</h3>
-                    <p>语音输入法通过语音识别技术将人的语音转换为文字。这个过程包括声音的采集、数字化、特征提取和文本转换。</p>
+                <div class="definition-box">
+                    <h3>计算机视觉的广泛应用</h3>
+                    <p>计算机视觉技术已经渗透到我们生活的方方面面，从工业生产到医疗服务，从智能交通到日常娱乐，都在改变着我们的生活方式。</p>
                 </div>
                 
-                <div class="animation-container">
-                    <h3 class="animation-title">语音信号数字化过程</h3>
-                    <div class="recognition-process">
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-wave-square"></i>
-                            </div>
-                            <div class="process-step-title">声波</div>
+                <div class="scenes-container">
+                    <div class="scene-card">
+                        <div class="scene-icon">
+                            <i class="fas fa-industry"></i>
                         </div>
-                        
-                        <div class="process-connector"></div>
-                        
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-microphone-alt"></i>
-                            </div>
-                            <div class="process-step-title">采集</div>
-                        </div>
-                        
-                        <div class="process-connector"></div>
-                        
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-filter"></i>
-                            </div>
-                            <div class="process-step-title">滤波</div>
-                        </div>
-                        
-                        <div class="process-connector"></div>
-                        
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-digital-tachograph"></i>
-                            </div>
-                            <div class="process-step-title">数字化</div>
-                        </div>
+                        <h3 class="scene-title">工业领域</h3>
+                        <p class="scene-desc">产品质量检测、自动化生产、零件识别与分类、机器人视觉引导</p>
                     </div>
                     
-                    <div class="voice-wave-demo">
-                        <div class="voice-wave">
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
+                    <div class="scene-card">
+                        <div class="scene-icon">
+                            <i class="fas fa-heartbeat"></i>
                         </div>
-                    </div>
-                </div>
-                
-                <div class="key-point">
-                    <p><strong>关键技术：</strong> 科大讯飞的语音输入，最高速度能够达到1分钟400字，不仅支持中文录入、中文转英文等功能，还支持<strong>粤语、四川话、东北话、上海话、闽南语</strong>等多种方言输入。</p>
-                </div>
-            </section>
-            
-            <!-- 步骤3: 语音识别流程 -->
-            <section id="step3" class="content-section">
-                <h2 class="section-title">语音识别流程</h2>
-                
-                <div class="explanation">
-                    <h3 class="explanation-title">自动语音识别 (ASR)</h3>
-                    <p>自动语音识别就是让机器通过识别和理解把语音信号转变为相应的文本或命令的技术。</p>
-                </div>
-                
-                <div class="animation-container">
-                    <h3 class="animation-title">语音识别四步流程</h3>
-                    <div class="recognition-process">
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-file-audio"></i>
-                            </div>
-                            <div class="process-step-title">音频数字化</div>
-                        </div>
-                        
-                        <div class="process-connector"></div>
-                        
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-search"></i>
-                            </div>
-                            <div class="process-step-title">特征提取</div>
-                        </div>
-                        
-                        <div class="process-connector"></div>
-                        
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-cogs"></i>
-                            </div>
-                            <div class="process-step-title">模型训练</div>
-                        </div>
-                        
-                        <div class="process-connector"></div>
-                        
-                        <div class="process-step">
-                            <div class="process-step-icon">
-                                <i class="fas fa-code"></i>
-                            </div>
-                            <div class="process-step-title">解码器</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="key-point">
-                    <p><strong>特征提取：</strong> 常用的语音特征提取技术是<strong>梅尔倒谱系数(MFCC)</strong>，它能提取语音中的关键特征，忽略无关信息。</p>
-                </div>
-                
-                <div class="explanation">
-                    <h3 class="explanation-title">为什么语音识别不能100%准确？</h3>
-                    <p>语音识别准确率受到多种因素影响：</p>
-                    <ul>
-                        <li><strong>环境影响：</strong> 噪音、场地、麦克风、信道</li>
-                        <li><strong>说话人影响：</strong> 口音、方言、音量</li>
-                        <li><strong>说话内容影响：</strong> 中英混读、专业术语</li>
-                    </ul>
-                </div>
-            </section>
-            
-            <!-- 步骤4: 声纹识别技术 -->
-            <section id="step4" class="content-section">
-                <h2 class="section-title">声纹识别技术</h2>
-                
-                <div class="explanation">
-                    <h3 class="explanation-title">什么是声纹识别？</h3>
-                    <p>声纹识别技术能够提取每个人独一无二的语音特征，实现<strong>"听音辨人"</strong>，在涉及说话人身份识别的场景中具有重要应用价值。</p>
-                </div>
-                
-                <div class="animation-container">
-                    <h3 class="animation-title">不同人的声纹特征对比</h3>
-                    <div class="voiceprint-demo">
-                        <div class="voiceprint-item">
-                            <div class="voiceprint" id="voiceprint1">
-                                <div class="voiceprint-line" style="animation-delay: 0s;"></div>
-                            </div>
-                            <div class="voiceprint-label">用户A声纹</div>
-                        </div>
-                        
-                        <div class="voiceprint-item">
-                            <div class="voiceprint" id="voiceprint2">
-                                <div class="voiceprint-line" style="animation-delay: 0.5s; height: 4px;"></div>
-                            </div>
-                            <div class="voiceprint-label">用户B声纹</div>
-                        </div>
-                        
-                        <div class="voiceprint-item">
-                            <div class="voiceprint" id="voiceprint3">
-                                <div class="voiceprint-line" style="animation-delay: 1s; height: 2px;"></div>
-                            </div>
-                            <div class="voiceprint-label">用户C声纹</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="key-point">
-                    <p><strong>应用场景：</strong> 声纹识别在公安司法、门禁考勤、金融安全和刑侦领域都有重要应用，可以用于处理电话骚扰、绑架、诈骗等案件中的声音信息。</p>
-                </div>
-                
-                <div class="interactive-demo">
-                    <h3 class="demo-title">声纹识别模拟</h3>
-                    <p>点击下方按钮，模拟不同用户的声纹识别过程：</p>
-                    
-                    <div class="demo-controls">
-                        <button class="demo-btn" id="recognizeUserA">
-                            <i class="fas fa-user"></i> 识别用户A
-                        </button>
-                        <button class="demo-btn" id="recognizeUserB">
-                            <i class="fas fa-user"></i> 识别用户B
-                        </button>
-                        <button class="demo-btn" id="recognizeUserC">
-                            <i class="fas fa-user"></i> 识别用户C
-                        </button>
+                        <h3 class="scene-title">医疗领域</h3>
+                        <p class="scene-desc">医学影像分析、疾病诊断辅助、手术导航、病理切片分析</p>
                     </div>
                     
-                    <div class="demo-output" id="voiceprintOutput">
-                        点击上方按钮开始声纹识别模拟
-                    </div>
-                </div>
-            </section>
-            
-            <!-- 步骤5: 应用场景演示 -->
-            <section id="step5" class="content-section">
-                <h2 class="section-title">语音处理应用场景</h2>
-                
-                <div class="explanation">
-                    <h3 class="explanation-title">语音技术的广泛应用</h3>
-                    <p>语音处理技术已经深入到我们生活的方方面面，从智能家居到车载系统，从客服中心到个人助手。</p>
-                </div>
-                
-                <div class="scenarios-grid">
-                    <div class="scenario-card" data-scenario="input">
-                        <div class="scenario-icon">
-                            <i class="fas fa-keyboard"></i>
-                        </div>
-                        <h3 class="scenario-title">语音输入法</h3>
-                        <p class="scenario-desc">将语音实时转换为文字，支持多种方言，输入效率提升数倍</p>
-                    </div>
-                    
-                    <div class="scenario-card" data-scenario="home">
-                        <div class="scenario-icon">
-                            <i class="fas fa-home"></i>
-                        </div>
-                        <h3 class="scenario-title">智能家居</h3>
-                        <p class="scenario-desc">语音控制灯光、温度、家电等，实现智能生活</p>
-                    </div>
-                    
-                    <div class="scenario-card" data-scenario="car">
-                        <div class="scenario-icon">
+                    <div class="scene-card">
+                        <div class="scene-icon">
                             <i class="fas fa-car"></i>
                         </div>
-                        <h3 class="scenario-title">车载语音助手</h3>
-                        <p class="scenario-desc">控制车辆功能、导航、娱乐，提升驾驶安全</p>
+                        <h3 class="scene-title">智能驾驶领域</h3>
+                        <p class="scene-desc">自动驾驶、交通标志识别、行人检测、车道线检测、停车辅助</p>
                     </div>
                     
-                    <div class="scenario-card" data-scenario="service">
-                        <div class="scenario-icon">
-                            <i class="fas fa-headset"></i>
+                    <div class="scene-card">
+                        <div class="scene-icon">
+                            <i class="fas fa-shield-alt"></i>
                         </div>
-                        <h3 class="scenario-title">智能客服</h3>
-                        <p class="scenario-desc">7×24小时自动应答，提升服务效率</p>
+                        <h3 class="scene-title">安防监控</h3>
+                        <p class="scene-desc">人脸识别、行为分析、异常检测、车牌识别、人群监控</p>
                     </div>
                     
-                    <div class="scenario-card" data-scenario="education">
-                        <div class="scenario-icon">
-                            <i class="fas fa-graduation-cap"></i>
+                    <div class="scene-card">
+                        <div class="scene-icon">
+                            <i class="fas fa-utensils"></i>
                         </div>
-                        <h3 class="scenario-title">智慧教育</h3>
-                        <p class="scenario-desc">语音评测、口语练习、智能辅导</p>
+                        <h3 class="scene-title">餐饮行业</h3>
+                        <p class="scene-desc">菜品识别、智能点餐、后厨监控、食材质量检测、无人餐厅</p>
                     </div>
                     
-                    <div class="scenario-card" data-scenario="robot">
-                        <div class="scenario-icon">
-                            <i class="fas fa-robot"></i>
+                    <div class="scene-card">
+                        <div class="scene-icon">
+                            <i class="fas fa-gamepad"></i>
                         </div>
-                        <h3 class="scenario-title">服务机器人</h3>
-                        <p class="scenario-desc">商场导览、餐厅服务、医院导诊</p>
+                        <h3 class="scene-title">其他领域</h3>
+                        <p class="scene-desc">增强现实、虚拟现实、游戏开发、教育技术、农业监测</p>
                     </div>
                 </div>
                 
-                <div class="interactive-demo">
-                    <h3 class="demo-title">车载语音助手功能演示</h3>
-                    <p>点击下方按钮，体验车载语音助手的不同功能：</p>
-                    
-                    <div class="demo-controls">
-                        <button class="demo-btn" id="carControl">
-                            <i class="fas fa-temperature-low"></i> 车辆控制
-                        </button>
-                        <button class="demo-btn" id="carMonitor">
-                            <i class="fas fa-exclamation-triangle"></i> 驾驶监控
-                        </button>
-                        <button class="demo-btn" id="carEntertainment">
-                            <i class="fas fa-music"></i> 娱乐系统
-                        </button>
-                        <button class="demo-btn" id="carNavigation">
-                            <i class="fas fa-map-marked-alt"></i> 智能导航
-                        </button>
-                    </div>
-                    
-                    <div class="demo-output" id="carOutput">
-                        点击上方按钮体验车载语音助手功能
-                    </div>
-                </div>
-            </section>
-            
-            <!-- 步骤6: 语音识别模拟器 -->
-            <section id="step6" class="content-section">
-                <h2 class="section-title">语音识别模拟器</h2>
-                
-                <div class="explanation">
-                    <h3 class="explanation-title">体验完整的语音识别过程</h3>
-                    <p>这个模拟器将演示从语音输入到文本输出的完整流程，包含语音采集、特征提取、模型匹配和文本输出四个步骤。</p>
-                </div>
-                
-                <div class="animation-container">
-                    <h3 class="animation-title">语音识别流程模拟</h3>
-                    
-                    <div class="recognition-process">
-                        <div class="process-step" id="stepMic">
-                            <div class="process-step-icon">
-                                <i class="fas fa-microphone"></i>
+                <div class="demo-container">
+                    <h3 class="demo-title">全球计算机视觉公司排名</h3>
+                    <div class="demo-area">
+                        <div class="demo-controls">
+                            <h3>科技强国 · 强国有我</h3>
+                            <p>在全球计算机视觉公司排名 top10 中，国内企业占据 3 家，展示了中国在人工智能领域的强大实力。</p>
+                            
+                            <div class="demo-buttons">
+                                <button class="demo-btn" id="showChinaCompanies">
+                                    <i class="fas fa-flag"></i> 查看中国公司
+                                </button>
+                                <button class="demo-btn" id="showGlobalRanking">
+                                    <i class="fas fa-globe"></i> 全球排名
+                                </button>
                             </div>
-                            <div class="process-step-title">语音输入</div>
+                            
+                            <div id="ranking-description">
+                                计算机视觉是人工智能的重要分支，中国在该领域已处于世界领先地位。
+                            </div>
                         </div>
                         
-                        <div class="process-connector" id="connector1"></div>
-                        
-                        <div class="process-step" id="stepFeature">
-                            <div class="process-step-icon">
-                                <i class="fas fa-search"></i>
+                        <div class="demo-visual" id="ranking-demo">
+                            <div class="cv-animation" style="display: flex; flex-direction: column; justify-content: center; padding: 20px;">
+                                <div style="text-align: center; margin-bottom: 30px;">
+                                    <div style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 10px;">TOP 10</div>
+                                    <div style="color: var(--text-light);">全球计算机视觉公司</div>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 30px;">
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 4rem; color: var(--accent-color); font-weight: bold;">3</div>
+                                        <div style="color: var(--text-light);">中国公司</div>
+                                    </div>
+                                    
+                                    <div style="width: 2px; height: 60px; background-color: var(--primary-color);"></div>
+                                    
+                                    <div style="text-align: center;">
+                                        <div style="font-size: 4rem; color: var(--secondary-color); font-weight: bold;">10</div>
+                                        <div style="color: var(--text-light);">总排名</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="process-step-title">特征提取</div>
-                        </div>
-                        
-                        <div class="process-connector" id="connector2"></div>
-                        
-                        <div class="process-step" id="stepModel">
-                            <div class="process-step-icon">
-                                <i class="fas fa-cogs"></i>
-                            </div>
-                            <div class="process-step-title">模型匹配</div>
-                        </div>
-                        
-                        <div class="process-connector" id="connector3"></div>
-                        
-                        <div class="process-step" id="stepOutput">
-                            <div class="process-step-icon">
-                                <i class="fas fa-file-alt"></i>
-                            </div>
-                            <div class="process-step-title">文本输出</div>
-                        </div>
-                    </div>
-                    
-                    <div class="voice-wave-demo">
-                        <div class="voice-wave" id="simulationWave">
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
-                            <div class="wave-bar"></div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="interactive-demo">
-                    <h3 class="demo-title">语音识别模拟器</h3>
-                    <p>选择一句语音，然后点击"开始识别"按钮，观察语音识别的完整过程：</p>
-                    
-                    <div class="demo-controls">
-                        <select id="speechSelect" style="padding: 12px; border-radius: 8px; border: 2px solid var(--primary-color); font-size: 1rem;">
-                            <option value="今天天气怎么样？">今天天气怎么样？</option>
-                            <option value="打开客厅的灯">打开客厅的灯</option>
-                            <option value="导航到最近的加油站">导航到最近的加油站</option>
-                            <option value="播放周杰伦的歌曲">播放周杰伦的歌曲</option>
-                            <option value="明天早上七点叫我起床">明天早上七点叫我起床</option>
-                        </select>
-                        
-                        <button class="demo-btn" id="startRecognition">
-                            <i class="fas fa-play"></i> 开始识别
-                        </button>
-                        
-                        <button class="demo-btn" id="resetRecognition">
-                            <i class="fas fa-redo"></i> 重置
-                        </button>
-                    </div>
-                    
-                    <div class="demo-output" id="recognitionOutput">
-                        请选择一句语音，然后点击"开始识别"
-                    </div>
-                    
-                    <div class="demo-output" id="recognitionSteps" style="margin-top: 20px; font-size: 0.95rem;">
-                        <div id="step1Status">1. 语音输入: 等待中...</div>
-                        <div id="step2Status">2. 特征提取: 等待中...</div>
-                        <div id="step3Status">3. 模型匹配: 等待中...</div>
-                        <div id="step4Status">4. 文本输出: 等待中...</div>
-                    </div>
+                <div class="tip-box">
+                    <p><i class="fas fa-lightbulb tip-icon"></i> <strong>展望未来：</strong> 随着人工智能技术的不断进步，计算机视觉将在更多领域发挥重要作用，从智能家居到智慧城市，从个性化医疗到环境保护，计算机视觉技术将深刻改变我们的生活方式。</p>
                 </div>
             </section>
             
@@ -1237,53 +1503,57 @@ description: "「临时网页」"
                 </div>
                 
                 <h1 class="completion-title">恭喜您完成学习！</h1>
-                <p class="completion-subtitle">您已经成功完成了《语音处理动画教学》的所有课程内容，掌握了语音处理的基本原理和应用场景。</p>
+                <p class="completion-subtitle">您已成功掌握了计算机视觉(CV)的基础知识，为深入学习人工智能和计算机视觉技术打下了坚实基础</p>
                 
-                <div class="summary-box">
-                    <h2 class="summary-title">学习内容总结</h2>
-                    <ul class="summary-list">
-                        <li>
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <strong>语音处理概述</strong> - 了解了语音处理的基本概念和应用价值
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <strong>语音输入原理</strong> - 掌握了语音如何转换为文字的基本原理
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <strong>语音识别流程</strong> - 学习了语音识别的四个关键步骤：音频数字化、特征提取、模型训练和解码器
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <strong>声纹识别技术</strong> - 理解了如何通过声纹实现"听音辨人"的技术
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <strong>应用场景演示</strong> - 探索了语音处理在智能家居、车载系统、客服中心等领域的应用
-                            </div>
-                        </li>
-                        <li>
-                            <i class="fas fa-check-circle"></i>
-                            <div>
-                                <strong>语音识别模拟器</strong> - 亲身体验了完整的语音识别过程
-                            </div>
-                        </li>
-                    </ul>
+                <div class="summary-container">
+                    <h2 class="summary-title">学习成果总结</h2>
                     
-                    <div style="text-align: center; margin-top: 30px; padding: 20px; background-color: #e8f4fd; border-radius: 10px;">
-                        <p style="font-size: 1.1rem; color: var(--secondary-color);">
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <h3><i class="fas fa-lightbulb"></i> 基本概念掌握</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> 理解了计算机视觉的基本定义</li>
+                                <li><i class="fas fa-check"></i> 了解了计算机视觉的实际应用</li>
+                                <li><i class="fas fa-check"></i> 掌握了计算机视觉的核心价值</li>
+                                <li><i class="fas fa-check"></i> 认识了计算机视觉与AI的关系</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <h3><i class="fas fa-project-diagram"></i> 开发流程理解</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> 掌握了计算机视觉的六步流程</li>
+                                <li><i class="fas fa-check"></i> 理解了图像获取与预处理</li>
+                                <li><i class="fas fa-check"></i> 学习了特征提取与数据建模</li>
+                                <li><i class="fas fa-check"></i> 了解了目标提取与结果分析</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <h3><i class="fas fa-tasks"></i> 基本任务认知</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> 图像识别与分类技术</li>
+                                <li><i class="fas fa-check"></i> 目标检测与定位方法</li>
+                                <li><i class="fas fa-check"></i> 图像分割与目标跟踪</li>
+                                <li><i class="fas fa-check"></i> 关键点检测与GAN技术</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="summary-item">
+                            <h3><i class="fas fa-globe-americas"></i> 应用场景了解</h3>
+                            <ul>
+                                <li><i class="fas fa-check"></i> 工业与医疗领域应用</li>
+                                <li><i class="fas fa-check"></i> 智能驾驶与安防监控</li>
+                                <li><i class="fas fa-check"></i> 餐饮与其他行业应用</li>
+                                <li><i class="fas fa-check"></i> 全球技术发展现状</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 40px; padding: 20px; background-color: rgba(58, 134, 255, 0.1); border-radius: 10px;">
+                        <p style="font-size: 1.2rem; color: var(--secondary-color);">
                             <i class="fas fa-quote-left" style="color: var(--accent-color); margin-right: 10px;"></i>
-                            语音交互架起人与物联网、互联网服务间的桥梁，让我们可以在任何时间、任何地方、任何设备上进行自然交流。
+                            计算机视觉是研究如何使用计算机和摄像机来替代人眼完成对目标的识别、跟踪和测量等工作，并进一步通过计算机进行图形图像处理，使它成为更适合人眼观察或传送给仪器检测的图像。
                             <i class="fas fa-quote-right" style="color: var(--accent-color); margin-left: 10px;"></i>
                         </p>
                     </div>
@@ -1300,71 +1570,69 @@ description: "「临时网页」"
             </section>
         </div>
         
-        <div class="learning-nav">
-            <button class="nav-btn" id="prevBtn">
-                <i class="fas fa-arrow-left"></i> 上一步
+        <!-- 底部导航 -->
+        <div class="footer-nav">
+            <button class="nav-btn prev" id="prevBtn">
+                <i class="fas fa-arrow-left"></i> 上一部分
             </button>
             
-            <div style="text-align: center;">
-                <div id="stepIndicator">步骤 1/6: 语音处理概述</div>
+            <div style="display: flex; align-items: center; gap: 20px;">
+                <div id="sectionIndicator">1/4: 基本概念</div>
+                <div id="sectionTimer" style="color: var(--text-light); font-size: 0.9rem;">
+                    <i class="far fa-clock"></i> 预计学习时间: 45分钟
+                </div>
             </div>
             
             <button class="nav-btn" id="nextBtn">
-                下一步 <i class="fas fa-arrow-right"></i>
+                下一部分 <i class="fas fa-arrow-right"></i>
             </button>
         </div>
     </div>
 
     <script>
-        // 当前学习步骤
-        let currentStep = 1;
-        const totalSteps = 6;
+        // 当前学习部分
+        let currentSection = 1;
+        const totalSections = 4;
         let isCompleted = false;
         
-        // DOM元素
-        const stepElements = document.querySelectorAll('.path-step');
-        const sectionElements = document.querySelectorAll('.content-section');
+        // 获取DOM元素
+        const tabs = document.querySelectorAll('.tab');
+        const sections = document.querySelectorAll('.content-section');
         const completionSection = document.getElementById('completion');
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
-        const progressBar = document.getElementById('progressBar');
-        const progressText = document.getElementById('progressText');
-        const stepIndicator = document.getElementById('stepIndicator');
+        const sectionIndicator = document.getElementById('sectionIndicator');
+        const progressCircles = document.querySelectorAll('.progress-circle');
         
-        // 步骤标题
-        const stepTitles = [
-            "语音处理概述",
-            "语音输入原理",
-            "语音识别流程",
-            "声纹识别技术",
-            "应用场景演示",
-            "语音识别模拟器"
+        // 部分标题
+        const sectionTitles = [
+            "1/4: 基本概念",
+            "2/4: 开发流程",
+            "3/4: 基本任务",
+            "4/4: 应用场景"
         ];
+        
+        // 部分学习时间
+        const sectionTimes = [10, 12, 15, 8];
         
         // 初始化页面
         function initPage() {
-            updateStepDisplay();
+            updateSectionDisplay();
             
-            // 设置步骤点击事件
-            stepElements.forEach(step => {
-                step.addEventListener('click', () => {
-                    const stepNumber = parseInt(step.getAttribute('data-step'));
-                    goToStep(stepNumber);
+            // 设置标签点击事件
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    goToSectionByTab(tabId);
                 });
             });
             
             // 设置导航按钮事件
-            prevBtn.addEventListener('click', goToPrevStep);
-            nextBtn.addEventListener('click', goToNextStep);
+            prevBtn.addEventListener('click', goToPrevSection);
+            nextBtn.addEventListener('click', goToNextSection);
             
-            // 初始化声纹识别交互
-            initVoiceprintDemo();
-            
-            // 初始化应用场景交互
-            initScenariosDemo();
-            
-            // 初始化语音识别模拟器
-            initRecognitionSimulator();
+            // 初始化交互演示
+            initDemos();
             
             // 设置完成页面按钮事件
             document.getElementById('restartLearning').addEventListener('click', restartLearning);
@@ -1374,53 +1642,66 @@ description: "「临时网页」"
             prevBtn.disabled = true;
         }
         
-        // 跳转到指定步骤
-        function goToStep(stepNumber) {
+        // 通过标签跳转到对应部分
+        function goToSectionByTab(tabId) {
             if (isCompleted) {
-                // 如果已完成学习，则先退出完成页面
                 hideCompletionPage();
                 isCompleted = false;
             }
             
-            if (stepNumber < 1 || stepNumber > totalSteps) return;
+            let sectionNumber;
             
-            currentStep = stepNumber;
-            updateStepDisplay();
+            switch(tabId) {
+                case 'concept': sectionNumber = 1; break;
+                case 'process': sectionNumber = 2; break;
+                case 'tasks': sectionNumber = 3; break;
+                case 'applications': sectionNumber = 4; break;
+                default: sectionNumber = 1;
+            }
+            
+            currentSection = sectionNumber;
+            updateSectionDisplay();
         }
         
-        // 上一步
-        function goToPrevStep() {
+        // 上一部分
+        function goToPrevSection() {
             if (isCompleted) {
-                // 如果已完成学习，则返回最后一步
                 hideCompletionPage();
-                goToStep(totalSteps);
+                goToSection(totalSections);
                 isCompleted = false;
                 return;
             }
             
-            if (currentStep > 1) {
-                currentStep--;
-                updateStepDisplay();
+            if (currentSection > 1) {
+                currentSection--;
+                updateSectionDisplay();
             }
         }
         
-        // 下一步
-        function goToNextStep() {
+        // 下一部分
+        function goToNextSection() {
             if (isCompleted) return; // 如果已显示完成页面，则不再响应
             
-            if (currentStep < totalSteps) {
-                currentStep++;
-                updateStepDisplay();
-            } else if (currentStep === totalSteps) {
-                // 如果是最后一步，则显示完成页面
+            if (currentSection < totalSections) {
+                currentSection++;
+                updateSectionDisplay();
+            } else if (currentSection === totalSections) {
                 showCompletionPage();
             }
+        }
+        
+        // 直接跳转到指定部分
+        function goToSection(sectionNumber) {
+            if (sectionNumber < 1 || sectionNumber > totalSections) return;
+            
+            currentSection = sectionNumber;
+            updateSectionDisplay();
         }
         
         // 显示完成页面
         function showCompletionPage() {
             // 隐藏所有内容区域
-            sectionElements.forEach(section => {
+            sections.forEach(section => {
                 section.classList.remove('active');
             });
             
@@ -1431,16 +1712,17 @@ description: "「临时网页」"
             prevBtn.style.display = 'none';
             nextBtn.style.display = 'none';
             
-            // 隐藏学习路径
-            document.querySelector('.learning-path').style.display = 'none';
+            // 隐藏标签导航
+            document.querySelector('.tabs-container').style.display = 'none';
             
-            // 隐藏进度条
+            // 隐藏进度指示器
             document.querySelector('.progress-container').style.display = 'none';
-            document.querySelector('.progress-text').style.display = 'none';
             
-            // 更新标题
-            document.querySelector('header h1').textContent = '学习完成！';
-            document.querySelector('header p').textContent = '恭喜您掌握了语音处理的基础知识';
+            // 更新所有进度圈为已完成状态
+            progressCircles.forEach(circle => {
+                circle.classList.add('completed');
+                circle.classList.remove('active');
+            });
             
             // 更新标志
             isCompleted = true;
@@ -1455,315 +1737,342 @@ description: "「临时网页」"
             prevBtn.style.display = 'flex';
             nextBtn.style.display = 'flex';
             
-            // 显示学习路径
-            document.querySelector('.learning-path').style.display = 'flex';
+            // 显示标签导航
+            document.querySelector('.tabs-container').style.display = 'flex';
             
-            // 显示进度条
-            document.querySelector('.progress-container').style.display = 'block';
-            document.querySelector('.progress-text').style.display = 'block';
+            // 显示进度指示器
+            document.querySelector('.progress-container').style.display = 'flex';
             
-            // 恢复标题
-            document.querySelector('header h1').textContent = '语音处理动画教学';
-            document.querySelector('header p').textContent = '通过交互式动画演示，零基础学习语音处理技术原理与应用场景';
-            
-            // 显示最后一步内容
-            document.getElementById(`step${totalSteps}`).classList.add('active');
+            // 显示当前部分内容
+            document.getElementById(getSectionId(currentSection)).classList.add('active');
+        }
+        
+        // 获取部分ID
+        function getSectionId(sectionNumber) {
+            switch(sectionNumber) {
+                case 1: return 'concept';
+                case 2: return 'process';
+                case 3: return 'tasks';
+                case 4: return 'applications';
+                default: return 'concept';
+            }
         }
         
         // 重新开始学习
         function restartLearning() {
             hideCompletionPage();
-            currentStep = 1;
-            updateStepDisplay();
+            currentSection = 1;
+            updateSectionDisplay();
         }
         
         // 复习课程内容
         function reviewLearning() {
             hideCompletionPage();
-            // 跳转到第一步开始复习
-            currentStep = 1;
-            updateStepDisplay();
+            // 跳转到第一部分开始复习
+            currentSection = 1;
+            updateSectionDisplay();
         }
         
-        // 更新步骤显示
-        function updateStepDisplay() {
+        // 更新部分显示
+        function updateSectionDisplay() {
             if (isCompleted) return;
             
-            // 更新步骤指示器
-            stepElements.forEach((step, index) => {
-                const stepNumber = index + 1;
+            // 更新标签状态
+            tabs.forEach((tab, index) => {
+                const tabNumber = index + 1;
                 
-                step.classList.remove('active', 'completed');
+                tab.classList.remove('active');
                 
-                if (stepNumber === currentStep) {
-                    step.classList.add('active');
-                } else if (stepNumber < currentStep) {
-                    step.classList.add('completed');
+                if (tabNumber === currentSection) {
+                    tab.classList.add('active');
                 }
             });
             
             // 更新内容区域
-            sectionElements.forEach((section, index) => {
-                const stepNumber = index + 1;
+            sections.forEach((section, index) => {
+                const sectionNumber = index + 1;
                 
                 section.classList.remove('active');
                 
-                if (stepNumber === currentStep) {
+                if (sectionNumber === currentSection) {
                     section.classList.add('active');
                 }
             });
             
-            // 更新进度条
-            const progressPercentage = (currentStep / totalSteps) * 100;
-            progressBar.style.width = `${progressPercentage}%`;
+            // 更新进度指示器
+            progressCircles.forEach((circle, index) => {
+                const circleNumber = index + 1;
+                
+                circle.classList.remove('active', 'completed');
+                
+                if (circleNumber === currentSection) {
+                    circle.classList.add('active');
+                } else if (circleNumber < currentSection) {
+                    circle.classList.add('completed');
+                }
+            });
             
-            // 更新进度文本
-            progressText.textContent = `学习进度: ${currentStep}/${totalSteps} (${stepTitles[currentStep-1]})`;
+            // 更新部分指示器
+            sectionIndicator.textContent = sectionTitles[currentSection-1];
             
-            // 更新步骤指示器
-            stepIndicator.textContent = `步骤 ${currentStep}/${totalSteps}: ${stepTitles[currentStep-1]}`;
+            // 更新时间估计
+            let remainingTime = 0;
+            for (let i = currentSection - 1; i < sectionTimes.length; i++) {
+                remainingTime += sectionTimes[i];
+            }
+            document.getElementById('sectionTimer').innerHTML = `<i class="far fa-clock"></i> 预计学习时间: ${remainingTime}分钟`;
             
             // 更新导航按钮状态
-            prevBtn.disabled = currentStep === 1;
+            prevBtn.disabled = currentSection === 1;
             
             // 更新下一步按钮文本
-            if (currentStep === totalSteps) {
+            if (currentSection === totalSections) {
                 nextBtn.innerHTML = '完成学习 <i class="fas fa-check"></i>';
                 nextBtn.classList.add('nav-btn-complete');
             } else {
-                nextBtn.innerHTML = '下一步 <i class="fas fa-arrow-right"></i>';
+                nextBtn.innerHTML = `下一部分 <i class="fas fa-arrow-right"></i>`;
                 nextBtn.classList.remove('nav-btn-complete');
             }
         }
         
-        // 初始化声纹识别演示
-        function initVoiceprintDemo() {
-            const recognizeUserA = document.getElementById('recognizeUserA');
-            const recognizeUserB = document.getElementById('recognizeUserB');
-            const recognizeUserC = document.getElementById('recognizeUserC');
-            const voiceprintOutput = document.getElementById('voiceprintOutput');
+        // 初始化交互演示
+        function initDemos() {
+            // 基本概念部分演示
+            const showOriginal = document.getElementById('showOriginal');
+            const showProcessed = document.getElementById('showProcessed');
+            const showResult = document.getElementById('showResult');
+            const demoDescription = document.getElementById('demo-description');
+            const originalImage = document.getElementById('original-image');
             
-            recognizeUserA.addEventListener('click', () => {
-                voiceprintOutput.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> 识别成功！这是用户A的声纹特征。</span><br>声纹特征匹配度: 98.7%';
-                
-                // 高亮显示对应的声纹图
-                document.getElementById('voiceprint1').style.boxShadow = '0 0 0 3px #4CAF50';
-                setTimeout(() => {
-                    document.getElementById('voiceprint1').style.boxShadow = 'none';
-                }, 2000);
-            });
-            
-            recognizeUserB.addEventListener('click', () => {
-                voiceprintOutput.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> 识别成功！这是用户B的声纹特征。</span><br>声纹特征匹配度: 96.2%';
-                
-                document.getElementById('voiceprint2').style.boxShadow = '0 0 0 3px #4CAF50';
-                setTimeout(() => {
-                    document.getElementById('voiceprint2').style.boxShadow = 'none';
-                }, 2000);
-            });
-            
-            recognizeUserC.addEventListener('click', () => {
-                voiceprintOutput.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> 识别成功！这是用户C的声纹特征。</span><br>声纹特征匹配度: 97.5%';
-                
-                document.getElementById('voiceprint3').style.boxShadow = '0 0 0 3px #4CAF50';
-                setTimeout(() => {
-                    document.getElementById('voiceprint3').style.boxShadow = 'none';
-                }, 2000);
-            });
-        }
-        
-        // 初始化应用场景演示
-        function initScenariosDemo() {
-            const scenarioCards = document.querySelectorAll('.scenario-card');
-            const carControl = document.getElementById('carControl');
-            const carMonitor = document.getElementById('carMonitor');
-            const carEntertainment = document.getElementById('carEntertainment');
-            const carNavigation = document.getElementById('carNavigation');
-            const carOutput = document.getElementById('carOutput');
-            
-            // 场景卡片点击效果
-            scenarioCards.forEach(card => {
-                card.addEventListener('click', () => {
-                    const scenario = card.getAttribute('data-scenario');
-                    let message = '';
+            if (showOriginal) {
+                showOriginal.addEventListener('click', () => {
+                    demoDescription.innerHTML = `
+                        <p><strong>原始图像：</strong> 这是计算机视觉系统的输入 - 原始图像数据。计算机看到的是由像素组成的矩阵，每个像素包含颜色信息。</p>
+                        <p>图像分辨率: 640×480 | 颜色模式: RGB | 文件大小: 约120KB</p>
+                    `;
                     
-                    switch(scenario) {
-                        case 'input':
-                            message = '语音输入法：将您的语音实时转换为文字，支持普通话和多种方言，输入效率比打字快2-3倍。';
-                            break;
-                        case 'home':
-                            message = '智能家居：通过语音控制家中的灯光、空调、电视等设备，实现"动口不动手"的智能生活。';
-                            break;
-                        case 'car':
-                            message = '车载语音助手：在驾驶过程中，通过语音控制导航、音乐、空调等，让您专注驾驶，提升安全性。';
-                            break;
-                        case 'service':
-                            message = '智能客服：提供7×24小时自动应答服务，能够理解用户问题并给出准确回答，提升客户服务效率。';
-                            break;
-                        case 'education':
-                            message = '智慧教育：通过语音识别技术进行口语评测，帮助语言学习者纠正发音，提升学习效果。';
-                            break;
-                        case 'robot':
-                            message = '服务机器人：在商场、餐厅、医院等场所，通过语音交互为用户提供导览、咨询和帮助服务。';
-                            break;
-                    }
-                    
-                    // 显示提示
-                    const tip = document.createElement('div');
-                    tip.style.position = 'fixed';
-                    tip.style.top = '50%';
-                    tip.style.left = '50%';
-                    tip.style.transform = 'translate(-50%, -50%)';
-                    tip.style.backgroundColor = 'rgba(0, 0, 0, 0.85)';
-                    tip.style.color = 'white';
-                    tip.style.padding = '20px';
-                    tip.style.borderRadius = '10px';
-                    tip.style.zIndex = '1000';
-                    tip.style.maxWidth = '400px';
-                    tip.style.textAlign = 'center';
-                    tip.innerHTML = `<h3>${card.querySelector('.scenario-title').textContent}</h3><p>${message}</p>`;
-                    
-                    document.body.appendChild(tip);
-                    
-                    setTimeout(() => {
-                        document.body.removeChild(tip);
-                    }, 3000);
+                    // 重置图像显示
+                    originalImage.innerHTML = `
+                        <i class="fas fa-carrot" style="color: #ff6b6b;"></i>
+                        <i class="fas fa-apple-alt" style="position: absolute; top: 30px; left: 30px; font-size: 1.8rem; color: #06d6a0;"></i>
+                        <i class="fas fa-lemon" style="position: absolute; bottom: 20px; right: 20px; font-size: 1.5rem; color: #ffd166;"></i>
+                    `;
+                    originalImage.style.border = "2px dashed #adb5bd";
+                    originalImage.style.backgroundColor = "#e9ecef";
                 });
-            });
-            
-            // 车载功能演示
-            carControl.addEventListener('click', () => {
-                carOutput.innerHTML = '<span style="color: #4361ee;"><i class="fas fa-check-circle"></i> 车辆控制功能已启动</span><br>正在调节车内空调温度至22°C，车窗已关闭，后视镜角度已调整。';
-            });
-            
-            carMonitor.addEventListener('click', () => {
-                carOutput.innerHTML = '<span style="color: #FF9800;"><i class="fas fa-exclamation-triangle"></i> 驾驶行为监控提醒</span><br>检测到您已连续驾驶2小时，建议休息。请注意安全驾驶，避免疲劳。';
-            });
-            
-            carEntertainment.addEventListener('click', () => {
-                carOutput.innerHTML = '<span style="color: #4CAF50;"><i class="fas fa-music"></i> 娱乐系统已启动</span><br>正在播放您喜欢的音乐列表：周杰伦 - 七里香。';
-            });
-            
-            carNavigation.addEventListener('click', () => {
-                carOutput.innerHTML = '<span style="color: #4361ee;"><i class="fas fa-map-marked-alt"></i> 智能导航已启动</span><br>已规划最优路线到市中心，全程15公里，预计需要30分钟。';
-            });
-        }
-        
-        // 初始化语音识别模拟器
-        function initRecognitionSimulator() {
-            const startBtn = document.getElementById('startRecognition');
-            const resetBtn = document.getElementById('resetRecognition');
-            const speechSelect = document.getElementById('speechSelect');
-            const recognitionOutput = document.getElementById('recognitionOutput');
-            
-            // 步骤状态元素
-            const step1Status = document.getElementById('step1Status');
-            const step2Status = document.getElementById('step2Status');
-            const step3Status = document.getElementById('step3Status');
-            const step4Status = document.getElementById('step4Status');
-            
-            // 流程步骤元素
-            const stepMic = document.getElementById('stepMic');
-            const stepFeature = document.getElementById('stepFeature');
-            const stepModel = document.getElementById('stepModel');
-            const stepOutput = document.getElementById('stepOutput');
-            const connector1 = document.getElementById('connector1');
-            const connector2 = document.getElementById('connector2');
-            const connector3 = document.getElementById('connector3');
-            const simulationWave = document.getElementById('simulationWave');
-            
-            // 重置模拟器
-            function resetSimulator() {
-                // 重置步骤状态
-                step1Status.innerHTML = '1. 语音输入: 等待中...';
-                step2Status.innerHTML = '2. 特征提取: 等待中...';
-                step3Status.innerHTML = '3. 模型匹配: 等待中...';
-                step4Status.innerHTML = '4. 文本输出: 等待中...';
-                
-                // 重置流程步骤样式
-                stepMic.style.backgroundColor = 'white';
-                stepFeature.style.backgroundColor = 'white';
-                stepModel.style.backgroundColor = 'white';
-                stepOutput.style.backgroundColor = 'white';
-                
-                connector1.style.backgroundColor = '#4cc9f0';
-                connector2.style.backgroundColor = '#4cc9f0';
-                connector3.style.backgroundColor = '#4cc9f0';
-                
-                // 重置输出
-                recognitionOutput.textContent = '请选择一句语音，然后点击"开始识别"';
-                
-                // 重置波形动画
-                simulationWave.style.opacity = '1';
-                
-                // 启用开始按钮
-                startBtn.disabled = false;
-                startBtn.innerHTML = '<i class="fas fa-play"></i> 开始识别';
             }
             
-            // 开始识别模拟
-            function startRecognition() {
-                const selectedSpeech = speechSelect.value;
-                
-                // 禁用开始按钮
-                startBtn.disabled = true;
-                startBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> 识别中...';
-                
-                // 重置步骤状态
-                resetSimulator();
-                
-                // 步骤1: 语音输入
-                setTimeout(() => {
-                    stepMic.style.backgroundColor = '#e8f4fd';
-                    step1Status.innerHTML = '1. 语音输入: <span style="color: #4CAF50;">进行中...</span>';
-                    recognitionOutput.textContent = `正在接收语音: "${selectedSpeech}"`;
+            if (showProcessed) {
+                showProcessed.addEventListener('click', () => {
+                    demoDescription.innerHTML = `
+                        <p><strong>处理过程：</strong> 计算机对图像进行预处理，包括去噪、增强对比度、调整大小等操作，使图像更适合后续分析。</p>
+                        <p>主要处理步骤: 灰度化 → 高斯滤波 → 边缘增强 → 二值化</p>
+                    `;
                     
-                    // 增强波形动画
-                    simulationWave.style.opacity = '1';
-                }, 500);
-                
-                // 步骤2: 特征提取
-                setTimeout(() => {
-                    stepFeature.style.backgroundColor = '#e8f4fd';
-                    connector1.style.backgroundColor = '#4CAF50';
-                    step2Status.innerHTML = '2. 特征提取: <span style="color: #4CAF50;">进行中...</span>';
-                    recognitionOutput.textContent = '正在提取语音特征 (MFCC特征提取中...)';
-                }, 2000);
-                
-                // 步骤3: 模型匹配
-                setTimeout(() => {
-                    stepModel.style.backgroundColor = '#e8f4fd';
-                    connector2.style.backgroundColor = '#4CAF50';
-                    step3Status.innerHTML = '3. 模型匹配: <span style="color: #4CAF50;">进行中...</span>';
-                    recognitionOutput.textContent = '正在匹配声学模型和语言模型...';
-                }, 3500);
-                
-                // 步骤4: 文本输出
-                setTimeout(() => {
-                    stepOutput.style.backgroundColor = '#e8f4fd';
-                    connector3.style.backgroundColor = '#4CAF50';
-                    step4Status.innerHTML = '4. 文本输出: <span style="color: #4CAF50;">完成！</span>';
+                    // 显示处理后的图像效果
+                    originalImage.innerHTML = `
+                        <div style="width: 100%; height: 100%; background: linear-gradient(45deg, #f8f9fa 25%, #e9ecef 25%, #e9ecef 50%, #f8f9fa 50%, #f8f9fa 75%, #e9ecef 75%, #e9ecef); background-size: 20px 20px;"></div>
+                    `;
+                    originalImage.style.border = "2px solid var(--primary-color)";
+                    originalImage.style.backgroundColor = "#f8f9fa";
+                });
+            }
+            
+            if (showResult) {
+                showResult.addEventListener('click', () => {
+                    demoDescription.innerHTML = `
+                        <p><strong>视觉理解：</strong> 计算机通过算法识别图像中的物体，并理解它们之间的关系。在这个例子中，计算机识别出了胡萝卜、苹果和柠檬。</p>
+                        <p>识别结果: 胡萝卜(置信度: 92%) | 苹果(置信度: 87%) | 柠檬(置信度: 79%)</p>
+                    `;
                     
                     // 显示识别结果
-                    recognitionOutput.innerHTML = `<span style="color: #4CAF50;"><i class="fas fa-check-circle"></i> 识别成功！</span><br><strong>识别结果:</strong> ${selectedSpeech}`;
-                    
-                    // 减弱波形动画
-                    simulationWave.style.opacity = '0.5';
-                    
-                    // 恢复开始按钮
-                    setTimeout(() => {
-                        startBtn.disabled = false;
-                        startBtn.innerHTML = '<i class="fas fa-play"></i> 开始识别';
-                    }, 1000);
-                }, 5000);
+                    originalImage.innerHTML = `
+                        <i class="fas fa-carrot" style="color: #ff6b6b;"></i>
+                        <i class="fas fa-apple-alt" style="position: absolute; top: 30px; left: 30px; font-size: 1.8rem; color: #06d6a0;"></i>
+                        <i class="fas fa-lemon" style="position: absolute; bottom: 20px; right: 20px; font-size: 1.5rem; color: #ffd166;"></i>
+                        <div class="detection-box" style="width: 60px; height: 60px; top: 30px; left: 30px; border-color: #ff6b6b;"></div>
+                        <div class="detection-box" style="width: 50px; height: 50px; top: 30px; left: 30px; border-color: #06d6a0;"></div>
+                        <div class="detection-box" style="width: 40px; height: 40px; bottom: 20px; right: 20px; border-color: #ffd166;"></div>
+                    `;
+                    originalImage.style.border = "2px solid var(--success-color)";
+                    originalImage.style.backgroundColor = "#f8f9fa";
+                });
             }
             
-            // 绑定事件
-            startBtn.addEventListener('click', startRecognition);
-            resetBtn.addEventListener('click', resetSimulator);
+            // 开发流程部分演示
+            const startProcess = document.getElementById('startProcess');
+            const resetProcess = document.getElementById('resetProcess');
+            const autoProcess = document.getElementById('autoProcess');
+            const processDescription = document.getElementById('process-description');
+            const processSteps = document.querySelectorAll('.step-circle');
             
-            // 初始重置
-            resetSimulator();
+            if (startProcess) {
+                startProcess.addEventListener('click', () => {
+                    // 重置所有步骤
+                    processSteps.forEach(step => {
+                        step.classList.remove('active');
+                    });
+                    
+                    // 逐步激活每个步骤
+                    let stepIndex = 0;
+                    const stepInterval = setInterval(() => {
+                        if (stepIndex < processSteps.length) {
+                            processSteps[stepIndex].classList.add('active');
+                            
+                            // 更新描述
+                            const stepNames = [
+                                "图像获取：通过摄像头或图像传感器捕获原始图像",
+                                "图像预处理：对图像进行去噪、增强、标准化等处理",
+                                "特征提取：从图像中提取关键特征，如边缘、纹理、颜色",
+                                "数据建模：使用机器学习算法建立模型来理解图像内容",
+                                "目标提取：从图像中分离出感兴趣的目标对象",
+                                "结果分析：对提取的目标进行识别、分类或测量"
+                            ];
+                            
+                            processDescription.innerHTML = `
+                                <p><strong>步骤 ${stepIndex + 1}/6：</strong> ${stepNames[stepIndex]}</p>
+                            `;
+                            
+                            stepIndex++;
+                        } else {
+                            clearInterval(stepInterval);
+                            processDescription.innerHTML = `
+                                <p><strong>流程完成！</strong> 计算机视觉开发流程已全部完成，系统现在可以识别和分析图像内容。</p>
+                            `;
+                        }
+                    }, 1000);
+                });
+            }
+            
+            if (resetProcess) {
+                resetProcess.addEventListener('click', () => {
+                    // 重置所有步骤
+                    processSteps.forEach(step => {
+                        step.classList.remove('active');
+                    });
+                    
+                    processDescription.innerHTML = `
+                        <p>点击"开始流程"按钮，查看计算机视觉开发的完整步骤</p>
+                    `;
+                });
+            }
+            
+            if (autoProcess) {
+                autoProcess.addEventListener('click', () => {
+                    // 自动完成所有步骤
+                    processSteps.forEach(step => {
+                        step.classList.remove('active');
+                    });
+                    
+                    // 快速激活所有步骤
+                    let stepIndex = 0;
+                    const stepInterval = setInterval(() => {
+                        if (stepIndex < processSteps.length) {
+                            processSteps[stepIndex].classList.add('active');
+                            stepIndex++;
+                        } else {
+                            clearInterval(stepInterval);
+                            processDescription.innerHTML = `
+                                <p><strong>自动演示完成！</strong> 计算机视觉开发流程已全部完成，系统现在可以识别和分析图像内容。</p>
+                            `;
+                        }
+                    }, 300);
+                });
+            }
+            
+            // 应用场景部分演示
+            const showChinaCompanies = document.getElementById('showChinaCompanies');
+            const showGlobalRanking = document.getElementById('showGlobalRanking');
+            const rankingDescription = document.getElementById('ranking-description');
+            const rankingDemo = document.getElementById('ranking-demo');
+            
+            if (showChinaCompanies) {
+                showChinaCompanies.addEventListener('click', () => {
+                    rankingDescription.innerHTML = `
+                        <p><strong>中国在计算机视觉领域的领先公司：</strong></p>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li><strong>商汤科技 (SenseTime)</strong> - 全球领先的人工智能平台公司</li>
+                            <li><strong>旷视科技 (Megvii)</strong> - 专注于人脸识别和图像识别技术</li>
+                            <li><strong>依图科技 (Yitu Technology)</strong> - 在计算机视觉和自然语言处理领域领先</li>
+                        </ul>
+                        <p style="margin-top: 10px;">这些公司在人脸识别、图像分析、自动驾驶等领域处于世界领先地位。</p>
+                    `;
+                    
+                    // 更新演示区域
+                    rankingDemo.innerHTML = `
+                        <div class="cv-animation" style="display: flex; flex-direction: column; justify-content: center; padding: 20px;">
+                            <div style="text-align: center; margin-bottom: 20px;">
+                                <div style="font-size: 2rem; color: var(--accent-color); margin-bottom: 10px;">中国领先的CV公司</div>
+                                <div style="color: var(--text-light);">全球计算机视觉领域的重要力量</div>
+                            </div>
+                            
+                            <div style="display: flex; flex-direction: column; gap: 15px;">
+                                <div style="display: flex; align-items: center; padding: 15px; background-color: rgba(58, 134, 255, 0.1); border-radius: 10px;">
+                                    <div style="width: 40px; height: 40px; background-color: var(--primary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 15px; font-weight: bold;">1</div>
+                                    <div>
+                                        <div style="font-weight: bold; color: var(--dark-color);">商汤科技</div>
+                                        <div style="font-size: 0.9rem; color: var(--text-light);">SenseTime - 全球AI平台领导者</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; padding: 15px; background-color: rgba(131, 56, 236, 0.1); border-radius: 10px;">
+                                    <div style="width: 40px; height: 40px; background-color: var(--secondary-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 15px; font-weight: bold;">2</div>
+                                    <div>
+                                        <div style="font-weight: bold; color: var(--dark-color);">旷视科技</div>
+                                        <div style="font-size: 0.9rem; color: var(--text-light);">Megvii - 人脸识别技术领先者</div>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; padding: 15px; background-color: rgba(255, 0, 110, 0.1); border-radius: 10px;">
+                                    <div style="width: 40px; height: 40px; background-color: var(--accent-color); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; margin-right: 15px; font-weight: bold;">3</div>
+                                    <div>
+                                        <div style="font-weight: bold; color: var(--dark-color);">依图科技</div>
+                                        <div style="font-size: 0.9rem; color: var(--text-light);">Yitu - CV与NLP技术领先者</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+            
+            if (showGlobalRanking) {
+                showGlobalRanking.addEventListener('click', () => {
+                    rankingDescription.innerHTML = `
+                        <p><strong>全球计算机视觉公司排名 (Top 10)：</strong></p>
+                        <p>在全球顶尖的计算机视觉公司中，中国企业占据了三席，展示了中国在人工智能领域的强大竞争力。</p>
+                        <p style="margin-top: 10px;">计算机视觉是人工智能的核心技术之一，正在推动各行各业的数字化转型。</p>
+                    `;
+                    
+                    // 更新演示区域
+                    rankingDemo.innerHTML = `
+                        <div class="cv-animation" style="display: flex; flex-direction: column; justify-content: center; padding: 20px;">
+                            <div style="text-align: center; margin-bottom: 30px;">
+                                <div style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 10px;">TOP 10</div>
+                                <div style="color: var(--text-light);">全球计算机视觉公司</div>
+                            </div>
+                            
+                            <div style="display: flex; align-items: center; justify-content: center; gap: 30px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 4rem; color: var(--accent-color); font-weight: bold;">3</div>
+                                    <div style="color: var(--text-light);">中国公司</div>
+                                </div>
+                                
+                                <div style="width: 2px; height: 60px; background-color: var(--primary-color);"></div>
+                                
+                                <div style="text-align: center;">
+                                    <div style="font-size: 4rem; color: var(--secondary-color); font-weight: bold;">10</div>
+                                    <div style="color: var(--text-light);">总排名</div>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: 30px; text-align: center; font-size: 0.9rem; color: var(--text-light);">
+                                <p>科技强国 · 强国有我</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
         }
         
         // 页面加载完成后初始化
@@ -1772,9 +2081,9 @@ description: "「临时网页」"
         // 添加键盘导航支持
         document.addEventListener('keydown', (e) => {
             if (e.key === 'ArrowLeft') {
-                goToPrevStep();
+                goToPrevSection();
             } else if (e.key === 'ArrowRight') {
-                goToNextStep();
+                goToNextSection();
             }
         });
     </script>
