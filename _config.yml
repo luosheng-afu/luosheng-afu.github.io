@@ -75,7 +75,7 @@ ga_domain: space.bilibili.com/29061672
 # Sidebar settings
 sidebar: true # whether or not using Sidebar.
 sidebar-about-description: "落笙<br>"
-sidebar-avatar: https://github.com/luosheng-afu/luosheng-afu.github.io/blob/main/img/avatar_2.jpg # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: https://avatars.githubusercontent.com/u/136422547?s=400&u=35137e43896e7eb946cad31d810c4b2f8b88227f&v=4# use absolute URL, seeing it's used in both `/` and `/about/`
 
 # Featured Tags
 featured-tags: true # whether or not using Feature-Tags
